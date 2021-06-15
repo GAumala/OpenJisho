@@ -1,5 +1,7 @@
 package com.gaumala.openjisho.frontend.pages
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
@@ -34,12 +36,22 @@ class AboutFragment : Fragment() {
 
     private fun bindView(view: View) {
         val bodyText = view.findViewById<TextView>(R.id.body_text)
+        val ghButton = view.findViewById<TextView>(R.id.github_button)
         val rawBodyHtml = getString(R.string.about_app_text_body)
         bodyText.text = HtmlCompat.fromHtml(
             rawBodyHtml,
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
         bodyText.movementMethod = LinkMovementMethod.getInstance()
+
+        ghButton.setOnClickListener { openGithubLink() }
+    }
+
+    private fun openGithubLink() {
+        val url = "https://github.com/GAumala/OpenJisho"
+        val i = Intent(Intent.ACTION_VIEW)
+        i.data = Uri.parse(url)
+        startActivity(i)
     }
 
     companion object {

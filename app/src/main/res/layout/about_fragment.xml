@@ -45,7 +45,7 @@
 
 
         <Button
-            android:id="@+id/github_link"
+            android:id="@+id/github_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/view_on_github"
@@ -70,7 +70,7 @@
             android:textAppearance="?textAppearanceBody2"
             android:layout_marginTop="16dp"
             android:gravity="start"
-            app:layout_constraintTop_toBottomOf="@id/github_link"/>
+            app:layout_constraintTop_toBottomOf="@id/github_button"/>
 
         <TextView
             android:id="@+id/libraries_title"
