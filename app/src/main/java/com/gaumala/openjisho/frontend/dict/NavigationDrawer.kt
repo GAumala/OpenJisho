@@ -75,8 +75,6 @@ class NavigationDrawer(private val activity: AppCompatActivity) {
                 showAboutFragment()
             R.id.help ->
                 showTourFragment()
-            R.id.my_lists ->
-                showMyListsFragment()
         }
 
         selectedMenuItemId = -1

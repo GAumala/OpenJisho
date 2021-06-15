@@ -10,5 +10,5 @@ class TourPageAdapter(fm: FragmentManager)
     override fun getItem(position: Int) =
         TourPageFragment.newInstance(position)
 
-    override fun getCount() = 5
+    override fun getCount() = 4
 }

@@ -56,15 +56,10 @@ class TourPageFragment: Fragment() {
                 binding.textTitle.setText(R.string.tour_history_title)
                 binding.textBody.setText(R.string.tour_history_body)
             }
-            3 -> {
+            else -> {
                 binding.pageArt.setImageResource(R.drawable.tour_radicals_art)
                 binding.textTitle.setText(R.string.tour_radicals_title)
                 binding.textBody.setText(R.string.tour_radicals_body)
-            }
-            else -> {
-                binding.pageArt.setImageResource(R.drawable.tour_lists_art)
-                binding.textTitle.setText(R.string.tour_lists_title)
-                binding.textBody.setText(R.string.tour_lists_body)
             }
         }
         return binding

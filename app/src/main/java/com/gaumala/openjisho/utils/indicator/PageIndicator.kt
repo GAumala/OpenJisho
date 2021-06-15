@@ -27,7 +27,7 @@ class PageIndicator: View {
     private lateinit var highlightedPaint: Paint
     private lateinit var normalPaint: Paint
 
-    private var numberOfPages: Int = 5
+    private var numberOfPages: Int = 4
     var pageIndex: Int = 0
         set(value) {
             field = value
