@@ -8,6 +8,10 @@ Japanese dictionary Android app that uses
 example sentences. All queries are done offline. Dictionary files are 
 downloaded during first time setup.
 
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/5729175/121984920-7265f500-cd59-11eb-92ea-9418487ade3e.png" />
+</p>
+
 ## LICENSE
 
 OpenJisho is licensed under GPL-3
