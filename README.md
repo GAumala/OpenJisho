@@ -14,7 +14,7 @@ downloaded during first time setup.
 
 ## LICENSE
 
-OpenJisho is licensed under GPL-3
+OpenJisho by Gabriel Aumala is licensed under GPL-3.
 
 ```
 This program is free software: you can redistribute it and/or modify
@@ -31,3 +31,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ```
 
+This project also includes a copy of the library 
+[FuriganaView](https://github.com/sh0/furigana-view) distributed under 
+CC BY-SA 3.0.
+
+Dictionary files are used in accordance with each copyright holder's license.
+
+Illustrations provided by Ambar Troya, all rights reserved. The illustrations 
+cannot be reproduced in any form, without permission. 
+[LEARN MORE](https://www.artstation.com/ambartroya)
