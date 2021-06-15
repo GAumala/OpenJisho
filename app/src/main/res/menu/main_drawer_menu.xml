@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/new_search"
+        android:icon="@drawable/ic_search_primary_24dp"
+        android:title="@string/new_search" />
+    <item android:id="@+id/my_lists"
+        android:icon="@drawable/ic_view_list_black_24dp"
+        android:title="@string/my_lists" />
+    <item android:id="@+id/rebuild"
+        android:icon="@drawable/ic_update_black_24dp"
+        android:title="@string/rebuild_db" />
+    <item android:id="@+id/about"
+        android:icon="@drawable/ic_info_outline_black_24dp"
+        android:title="@string/about" />
+    <item android:id="@+id/help"
+        android:icon="@drawable/ic_help_outline_black_24dp"
+        android:title="@string/help" />
+</menu>

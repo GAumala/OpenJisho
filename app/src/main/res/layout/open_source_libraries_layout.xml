@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Quick and dirty layout for open source libraries
+     I should probably move to something more dynamic and
+     easier to maintain if the list grows too much -->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView
+        android:id="@+id/license_title1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?textAppearanceSubtitle1"
+        android:text="furigana-view"
+        app:layout_constraintTop_toBottomOf="@id/libraries_title"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="16dp" />
+
+    <TextView
+        android:id="@+id/license_subtitle1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?textAppearanceBody1"
+        android:text="by Siim Meerits (CC BY-SA 3.0)\nhttps://github.com/sh0/furigana-view"
+        android:textColor="@color/material_on_background_emphasis_medium"
+        android:autoLink="web"
+        app:layout_constraintTop_toBottomOf="@id/license_title1"
+        app:layout_constraintStart_toStartOf="@id/license_title1"
+        app:layout_constraintEnd_toEndOf="@id/license_title1"/>
+
+    <View
+        android:id="@+id/license_divider1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_light_gray"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/license_subtitle1"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/license_title2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?textAppearanceSubtitle1"
+        android:text="Groupie"
+        app:layout_constraintTop_toBottomOf="@id/license_divider1"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp" />
+    <TextView
+        android:id="@+id/license_subtitle2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?textAppearanceBody1"
+        android:text="by Lisa Wray (MIT)\nhttps://github.com/lisawray/groupie"
+        android:textColor="@color/material_on_background_emphasis_medium"
+        android:autoLink="web"
+        app:layout_constraintTop_toBottomOf="@id/license_title2"
+        app:layout_constraintStart_toStartOf="@id/license_title2"
+        app:layout_constraintEnd_toEndOf="@id/license_title2"/>
+
+    <View
+        android:id="@+id/license_divider2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_light_gray"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/license_subtitle2"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/license_title3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?textAppearanceSubtitle1"
+        android:text="mvi-android"
+        app:layout_constraintTop_toBottomOf="@id/license_divider2"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp" />
+    <TextView
+        android:id="@+id/license_subtitle3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?textAppearanceBody1"
+        android:text="by Gabriel Aumala (MIT)\nhttps://github.com/GAumala/mvi-android"
+        android:textColor="@color/material_on_background_emphasis_medium"
+        android:autoLink="web"
+        app:layout_constraintTop_toBottomOf="@id/license_title3"
+        app:layout_constraintStart_toStartOf="@id/license_title3"
+        app:layout_constraintEnd_toEndOf="@id/license_title3"/>
+
+    <View
+        android:id="@+id/license_divider3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_light_gray"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/license_subtitle3"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/license_title4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?textAppearanceSubtitle1"
+        android:text="Apache Commons Net"
+        app:layout_constraintTop_toBottomOf="@id/license_divider3"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp" />
+    <TextView
+        android:id="@+id/license_subtitle4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?textAppearanceBody1"
+        android:text="by Apache Foundation (Apache 2.0)\nhttps://commons.apache.org/proper/commons-net/"
+        android:textColor="@color/material_on_background_emphasis_medium"
+        android:autoLink="web"
+        app:layout_constraintTop_toBottomOf="@id/license_title4"
+        app:layout_constraintStart_toStartOf="@id/license_title4"
+        app:layout_constraintEnd_toEndOf="@id/license_title4"/>
+
+    <View
+        android:id="@+id/license_divider4"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_light_gray"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/license_subtitle4"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/license_title5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?textAppearanceSubtitle1"
+        android:text="Apache Commons Compress"
+        app:layout_constraintTop_toBottomOf="@id/license_divider4"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp" />
+    <TextView
+        android:id="@+id/license_subtitle5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?textAppearanceBody1"
+        android:text="by Apache Foundation (Apache 2.0)\nhttp://commons.apache.org/proper/commons-compress/"
+        android:textColor="@color/material_on_background_emphasis_medium"
+        android:autoLink="web"
+        app:layout_constraintTop_toBottomOf="@id/license_title5"
+        app:layout_constraintStart_toStartOf="@id/license_title5"
+        app:layout_constraintEnd_toEndOf="@id/license_title5"/>
+
+</merge>

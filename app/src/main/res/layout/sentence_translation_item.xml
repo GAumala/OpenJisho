@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- I'm using less padding on top because this will always
+     be the first item, so it already has some top padding -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/text_view"
+    tools:text="If you act quickly..."
+    android:textIsSelectable="true"
+    android:textAppearance="?textAppearanceHeadline5"
+    android:textColor="@color/material_on_surface_emphasis_medium"
+    android:paddingTop="8dp"
+    android:paddingBottom="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />

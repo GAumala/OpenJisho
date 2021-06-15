@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/delete_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:contentDescription="@string/delete"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:tint="@android:color/white"
+        android:layout_gravity="center_vertical|start"
+        android:src="@drawable/ic_delete_24dp" />
+
+    <TextView
+        android:id="@+id/text_view"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:paddingStart="56dp"
+        android:gravity="center_vertical"
+        android:background="?colorSurface"
+        android:foreground="?selectableItemBackground"
+        android:text="@{queryText}"
+        style="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle" />
+</FrameLayout>
+

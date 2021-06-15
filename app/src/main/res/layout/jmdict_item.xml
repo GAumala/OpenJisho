@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="6dp">
+
+    <ee.yutani.furiganaview.FuriganaView
+        android:id="@+id/header_furigana"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="元気"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <!-- This textView is only created to get a TextPaint instance
+    with the desired style for FuriganaView. I do this because I have
+    no idea how to create TextPaint instances manually -->
+    <TextView
+        android:id="@+id/header_text"
+        android:textAppearance="?textAppearanceHeadline5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"/>
+    <TextView
+        android:id="@+id/sub_text"
+        android:textAppearance="?textAppearanceSubtitle1"
+        android:textColor="@color/material_on_surface_emphasis_medium"
+        android:layout_width="match_parent"
+        android:text="@{sub}"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:layout_height="wrap_content"
+        tools:text="lively; full of spirit, energetic, vigorous"
+        app:layout_constraintTop_toBottomOf="@id/header_furigana" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="main_blue">#9A95C9</color>
+    <color name="main_blue_variant">#8A86B7</color>
+    <color name="main_purple">#995DFF</color>
+    <color name="main_purple_variant">#5D00FA</color>
+
+    <color name="red_200">#cf6679</color> <!--Color error (dark)-->
+    <color name="red_600">#b00020</color> <!--Color error (light)-->
+
+    <!--Color surface (light), color on error (light), -->
+    <!--color on surface (dark), color on surface (dark)-->
+    <color name="white_50">#ffffff</color>
+
+    <color name="black_800">#121212</color> <!--Color surface (dark)-->
+    <!--Color on secondary (light), color on background (light),-->
+    <!--color on surface (light)-->
+    <color name="black_900">#000000</color>
+
+    <color name="pink_bg">#FFCBD3</color>
+    <color name="divider_light_gray">#1A000000</color>
+    <color name="progress_bg_grey">#C4C4C4</color>
+    <color name="selected_card_bg">#4DA099FF</color>
+    <color name="white_70p">#B3FFFFFF</color>
+    <color name="violeta_grisaceo">#E7E6E8</color>
+
+    <!-- TAG COLORS -->
+    <color name="dark_gray">#A9A9A9</color>
+    <color name="dark_orange">#FF8C00</color>
+    <color name="crimson">#DC143C</color>
+    <color name="cadet_blue">#5F9EA0</color>
+    <color name="mantis">#74C365</color>
+    <color name="forest_green">#228B22</color>
+    <color name="pale_violet_red">#DB7093</color>
+    <color name="deep_pink">#FF1493</color>
+    <color name="medium_violet_red">#C71585</color>
+    <color name="gold">#FFD700</color>
+    <color name="dark_turquoise">#00CED1</color>
+    <color name="medium_orchid">#BA55D3</color>
+    <color name="blue_violet">#8A2BE2</color>
+    <color name="chocolate">#D2691E</color>
+    <color name="maroon">#800000</color>
+    <color name="dim_gray">#696969</color>
+    <color name="purple">#800080</color>
+    <color name="sienna">#A0522D</color>
+    <color name="royal_blue">#4169E1</color>
+    <color name="yellow_green">#9ACD32</color>
+    <color name="rosy_brown">#BC8F8F</color>
+    <color name="salmon">#FA8072</color>
+    <color name="black">#000000</color>
+    <color name="dark_slate_blue">#483D8B</color>
+    <color name="fire_brick">#B22222</color>
+    <color name="auerolin">#FDEE00</color>
+    <color name="cerulean">#007BA7</color>
+    <color name="bazaar">#98777B</color>
+    <color name="bleu_de_france">#318CE7</color>
+    <color name="cerise_pink">#EC3b83</color>
+    <color name="azure">#007FFF</color>
+    <color name="jade">#00A86B</color>
+    <color name="lavender_magenta">#EE82EE</color>
+    <color name="storm_cloud">#008080</color>
+    <color name="mango_tango">#FF8243</color>
+    <color name="pastel_orange">#FFB347</color>
+    <color name="rose_gold">#b76e79</color>
+    <color name="tag_color">#5400E8</color>
+
+
+</resources>

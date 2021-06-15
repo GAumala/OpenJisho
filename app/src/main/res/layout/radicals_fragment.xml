@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".frontend.radicals.RadicalsFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/radicals_app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?colorPrimary"
+        android:paddingBottom="8dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/dict_search_icon"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:foreground="?attr/selectableItemBackground"
+            android:tint="@android:color/white"
+            android:padding="16dp"
+            android:src="@drawable/ic_radical_search_off"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/search_input"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="12dp"
+            android:background="@drawable/rounded_text_input_bg_white_24dp"
+            android:elevation="4dp"
+            android:gravity="center_vertical"
+            android:transitionName="@string/search_widget"
+            app:layout_constraintBottom_toBottomOf="@id/dict_search_icon"
+            app:layout_constraintEnd_toStartOf="@id/dict_search_icon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/dict_search_icon">
+
+            <EditText
+                android:id="@+id/search_edit_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:layout_marginStart="22dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:focusable="false"
+                android:hint="@string/search"
+                android:imeOptions="actionDone"
+                android:inputType="none"
+                android:maxLines="1"
+                android:textIsSelectable="true"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:id="@+id/search_companion_btn"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="14dp"
+                android:padding="8dp"
+                android:src="@drawable/backspace_search_icon"
+                android:tint="@color/main_blue" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <HorizontalScrollView
+        android:id="@+id/selected_radicals_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/radicals_app_bar">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/selected_radicals_group"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            app:singleLine="true" />
+    </HorizontalScrollView>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/radicals_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.6" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/radicals_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="?colorPrimary"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/radicals_top" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/results_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        app:layout_constraintBottom_toTopOf="@id/radicals_recycler"
+        app:layout_constraintTop_toBottomOf="@id/selected_radicals_scroll" />
+
+    <TextView
+        android:id="@+id/welcome_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/dict_welcome_radicals"
+        android:textAppearance="?attr/textAppearanceSubtitle1"
+        android:textColor="@color/material_on_surface_emphasis_high_type"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/radicals_app_bar" />
+
+
+    <com.gaumala.openjisho.utils.image.MatrixImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:id="@+id/welcome_art"
+        android:src="@drawable/welcome_art"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginEnd="64dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintVertical_bias="0.2"
+        app:layout_constraintTop_toBottomOf="@id/welcome_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/radicals_top" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/welcome_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="welcome_art,welcome_text"/>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/results_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="results_recycler,selected_radicals_scroll"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

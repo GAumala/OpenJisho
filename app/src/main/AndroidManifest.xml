@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.gaumala.openjisho">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- allow backup is false because my database schemas are still very
+    alpha and android Marshmallow doesn't delete the database because it
+    backs it up by default. I should probably just destroy everything on
+    migrations. -->
+    <application
+            android:allowBackup="false"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:supportsRtl="true"
+            android:theme="@style/Theme.MyApp">
+        <activity android:name="com.gaumala.openjisho.MainActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:name="com.gaumala.openjisho.SecondaryActivity"
+            android:windowSoftInputMode="adjustResize" />
+
+        <service android:name="com.gaumala.openjisho.backend.setup.SetupService"/>
+    </application>
+
+</manifest>

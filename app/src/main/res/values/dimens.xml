@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text_item_top_margin">12dp</dimen>
+    <dimen name="light_divider_height">1dp</dimen>
+    <dimen name="chip_group_bottom_margin">8dp</dimen>
+    <dimen name="padding_16">16dp</dimen>
+    <dimen name="radical_grid_size">56dp</dimen>
+    <dimen name="kanji_grid_size">72dp</dimen>
+    <dimen name="cards_spacing">8dp</dimen>
+    <dimen name="entry_banner_art_end_padding">48dp</dimen>
+    <dimen name="tag_v_padding">6dp</dimen>
+    <dimen name="tag_h_padding">12dp</dimen>
+    <dimen name="grid_item_medium_size">56dp</dimen>
+    <dimen name="grid_item_large_size">72dp</dimen>
+    <dimen name="progress_view_diameter">60dp</dimen>
+</resources>

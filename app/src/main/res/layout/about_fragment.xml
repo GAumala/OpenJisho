@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="116dp"
+            android:layout_height="116dp"
+            android:src="@drawable/about_logo"
+            android:layout_marginTop="52dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+        <TextView
+            app:layout_constraintTop_toBottomOf="@id/logo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp"
+            android:id="@+id/title_text"
+            android:text="@string/app_name"
+            android:textAppearance="?textAppearanceHeadline4"
+            android:textColor="@color/material_on_surface_emphasis_high_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/by_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="2dp"
+            android:textAppearance="?textAppearanceBody1"
+            android:textColor="@color/material_on_surface_emphasis_medium"
+            android:text="@string/by_author"
+            app:layout_constraintTop_toBottomOf="@id/title_text"
+        />
+
+
+        <Button
+            android:id="@+id/github_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/view_on_github"
+            android:textAppearance="?textAppearanceButton"
+            android:gravity="center"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="?colorSecondary"
+            android:textAllCaps="false"
+            android:drawableLeft="@drawable/github_logo_small_white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/by_text" />
+
+        <TextView
+            android:id="@+id/body_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="@string/about_app_text_body"
+            android:textAppearance="?textAppearanceBody2"
+            android:layout_marginTop="16dp"
+            android:gravity="start"
+            app:layout_constraintTop_toBottomOf="@id/github_link"/>
+
+        <TextView
+            android:id="@+id/libraries_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?textAppearanceSubtitle1"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/open_source_libraries"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp"
+            app:layout_constraintTop_toBottomOf="@id/body_text"/>
+
+        <include layout="@layout/open_source_libraries_layout" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

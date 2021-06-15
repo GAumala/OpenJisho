@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".frontend.dict.DictFragment">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/dict_app_bar"
+        style="?appBarLayoutStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            app:layout_scrollFlags="scroll|enterAlways"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_collapseMode="parallax"
+                android:paddingBottom="8dp">
+
+                <ImageView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="8dp"
+                    android:padding="16dp"
+                    android:id="@+id/drawer_menu_icon"
+                    android:src="@drawable/ic_menu_white_24dp"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <ImageView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="8dp"
+                    android:padding="16dp"
+                    android:id="@+id/radical_search_icon"
+                    android:tint="@android:color/white"
+                    android:src="@drawable/ic_radical_search"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <LinearLayout
+                    android:id="@+id/search_input"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/rounded_text_input_bg_white_24dp"
+                    app:layout_constraintTop_toTopOf="@id/radical_search_icon"
+                    app:layout_constraintBottom_toBottomOf="@id/radical_search_icon"
+                    app:layout_constraintStart_toEndOf="@id/drawer_menu_icon"
+                    app:layout_constraintEnd_toStartOf="@id/radical_search_icon"
+                    android:gravity="center_vertical"
+                    android:descendantFocusability="beforeDescendants"
+                    android:focusableInTouchMode="true"
+                    android:transitionName="@string/search_widget" >
+
+                    <EditText
+                        android:id="@+id/search_edit_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center_vertical"
+                        android:layout_marginStart="22dp"
+                        android:background="@null"
+                        android:textSize="20sp"
+                        android:hint="@string/search"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:imeOptions="actionDone"
+                        android:layout_weight="1"/>
+
+                    <ImageView
+                        android:id="@+id/search_companion_btn"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:padding="8dp"
+                        android:tint="?colorPrimary"
+                        android:layout_marginEnd="14dp"
+                        android:layout_gravity="end|center_vertical"
+                        android:src="@drawable/clear_search_icon" />
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/entries"/>
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/sentences"/>
+
+        </com.google.android.material.tabs.TabLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <include layout="@layout/dict_content_layout" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

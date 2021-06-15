@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="speed_dial_bg"/>
+    <item type="id" name="new_entry_action"/>
+    <item type="id" name="new_sentence_action"/>
+    <item type="id" name="new_text_action"/>
+</resources>
