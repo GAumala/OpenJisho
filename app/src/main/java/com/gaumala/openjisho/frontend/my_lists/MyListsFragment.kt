@@ -24,7 +24,7 @@ class MyListsFragment : Fragment() {
 
     private lateinit var ui: MyListsUI
     private val viewModel by lazy {
-        ViewModelProvider(this, MyListsViewModelFactory(this))
+        ViewModelProvider(this, MyListsViewModel.Factory(this))
             .get(MyListsViewModel::class.java)
     }
     private val toolbarMenu: ContextualToolbarMenu by lazy {

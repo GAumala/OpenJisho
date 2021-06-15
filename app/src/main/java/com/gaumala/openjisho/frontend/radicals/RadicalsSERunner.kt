@@ -7,12 +7,10 @@ import com.gaumala.mvi.SideEffectRunner
 import com.gaumala.openjisho.frontend.radicals.RadicalsQueries.searchKanjiWithRadicalCombination
 import kotlinx.coroutines.*
 
-class RadicalsSERunner(private val dao: DictQueryDao)
-    : SideEffectRunner<RadicalsState, RadicalsSideEffect> {
-
-    private val defaultJob = Job()
-    private val defaultScope =
-        CoroutineScope(defaultJob + Dispatchers.Main)
+class RadicalsSERunner(
+    private val scope: CoroutineScope,
+    private val dao: DictQueryDao
+): SideEffectRunner<RadicalsState, RadicalsSideEffect> {
 
     override fun runSideEffect(
         sink: ActionSink<RadicalsState, RadicalsSideEffect>,
@@ -21,11 +19,10 @@ class RadicalsSERunner(private val dao: DictQueryDao)
             searchKanji(sink, args)
     }
 
-
     private fun searchKanji(
         sink: ActionSink<RadicalsState, RadicalsSideEffect>,
         args: RadicalsSideEffect.SearchKanji) {
-        defaultScope.launch(Dispatchers.Main) {
+        scope.launch(Dispatchers.Main) {
             val (results, radicals) = withContext(Dispatchers.IO) {
                 searchKanjiWithRadicalCombination(
                     dao, args.combination, args.radicals)

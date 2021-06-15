@@ -72,7 +72,7 @@ class SetupFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
         val viewModel = ViewModelProviders
-            .of(this, SetupViewModelFactory())
+            .of(this, SetupViewModel.Factory())
             .get(SetupViewModel::class.java)
 
         val view = inflater.inflate(R.layout.setup_fragment,

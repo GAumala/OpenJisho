@@ -8,10 +8,10 @@ import com.gaumala.mvi.SideEffectRunner
 import kotlinx.coroutines.*
 import java.util.*
 
-class EntrySideEffectRunner (private val dao: DictQueryDao) : SideEffectRunner<EntryState, EntrySideEffect> {
-    private val defaultJob = Job()
-    private val defaultScope =
-        CoroutineScope(defaultJob + Dispatchers.Main)
+class EntrySideEffectRunner (
+    private val scope: CoroutineScope,
+    private val dao: DictQueryDao
+): SideEffectRunner<EntryState, EntrySideEffect> {
 
     override fun runSideEffect(
         sink: ActionSink<EntryState, EntrySideEffect>,
@@ -24,7 +24,7 @@ class EntrySideEffectRunner (private val dao: DictQueryDao) : SideEffectRunner<E
         sink: ActionSink<EntryState, EntrySideEffect>,
         args: EntrySideEffect.SearchKanji
     ) {
-        defaultScope.launch(Dispatchers.Main) {
+        scope.launch(Dispatchers.Main) {
             val results = withContext(Dispatchers.IO) {
 
                 val literals = args.kanjiElements.flatMap {

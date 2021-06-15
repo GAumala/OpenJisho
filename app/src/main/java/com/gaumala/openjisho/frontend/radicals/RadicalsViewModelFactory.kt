@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.gaumala.openjisho.backend.db.DictDatabase
 import com.gaumala.openjisho.frontend.dict.DictSavedState
 import com.gaumala.mvi.Dispatcher
@@ -23,13 +24,15 @@ class RadicalsViewModelFactory(private val f: Fragment): ViewModelProvider.Facto
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         val ctx = f.activity as Context
 
+        val viewModel = RadicalsViewModel()
+
         val appDB = DictDatabase.getInstance(ctx)
-        val seRunner = RadicalsSERunner(appDB.dictQueryDao())
+        val seRunner = RadicalsSERunner(
+            viewModel.viewModelScope, appDB.dictQueryDao())
 
         val initialState = getInitialState()
         val newDispatcher = Dispatcher(seRunner, initialState)
 
-        val viewModel = RadicalsViewModel()
         viewModel.setDispatcher(newDispatcher)
         return viewModel as T
     }

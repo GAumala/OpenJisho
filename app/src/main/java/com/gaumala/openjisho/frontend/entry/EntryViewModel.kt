@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.gaumala.mvi.Dispatcher
 import com.gaumala.mvi.DispatcherViewModel
 import com.gaumala.openjisho.backend.db.DictDatabase
@@ -38,19 +39,19 @@ class EntryViewModel: DispatcherViewModel<EntryState, EntrySideEffect>() {
 
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             val ctx = f.activity as Context
-            val appDB = DictDatabase.getInstance(ctx)
+
+            val viewModel = EntryViewModel()
 
             val initialState = createInitialState()
-
-
-            val runner = EntrySideEffectRunner(appDB.dictQueryDao())
+            val appDB = DictDatabase.getInstance(ctx)
+            val runner = EntrySideEffectRunner(
+                viewModel.viewModelScope, appDB.dictQueryDao())
             val newDispatcher = Dispatcher(runner, initialState)
 
             val startupSideEffect = createStartupSideEffect()
             if (startupSideEffect != null)
                 runner.runSideEffect(newDispatcher, startupSideEffect)
 
-            val viewModel = EntryViewModel()
             viewModel.setDispatcher(newDispatcher)
             return viewModel as T
         }

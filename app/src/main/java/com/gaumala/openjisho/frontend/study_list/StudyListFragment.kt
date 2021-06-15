@@ -26,13 +26,11 @@ import com.gaumala.openjisho.utils.ui.AbstractSnackbar
 class StudyListFragment: Fragment() {
     private lateinit var ui: StudyListUI
     private val viewModel by lazy {
-        ViewModelProvider(this, StudyListViewModelFactory(this))
+        ViewModelProvider(this, StudyListViewModel.Factory(this))
             .get(StudyListViewModel::class.java)
     }
 
-    private val name by lazy {
-        requireArguments().getString(NAME_KEY)
-    }
+    private val name by lazy { requireArguments().getString(NAME_KEY) }
 
     private val navigator = object: StudyListNavigator {
         override fun goToJMdictEntry(summary: JMdictEntry.Summarized) {

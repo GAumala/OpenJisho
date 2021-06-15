@@ -98,7 +98,7 @@ class DictFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         setHasOptionsMenu(true)
-        val factory = DictViewModelFactory(this, savedInstanceState)
+        val factory = DictViewModel.Factory(this, savedInstanceState)
         val viewModel =
             ViewModelProvider(this, factory)
                 .get(DictViewModel::class.java)
