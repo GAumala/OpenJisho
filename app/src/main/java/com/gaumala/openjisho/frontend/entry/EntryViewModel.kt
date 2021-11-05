@@ -16,11 +16,12 @@ class EntryViewModel: DispatcherViewModel<EntryState, EntrySideEffect>() {
     class Factory(val f: Fragment): ViewModelProvider.Factory {
         private fun createInitialState(): EntryState {
             val args = f.requireArguments()
-            val jmDictEntry = args.getParcelable<JMdictEntry>(EntryFragment.JMDICT_ENTRY_KEY)
-            val title = args.getString(EntryFragment.JMDICT_TITLE_KEY)!!
 
-            if (jmDictEntry != null)
+            val jmDictEntry = args.getParcelable<JMdictEntry>(EntryFragment.JMDICT_ENTRY_KEY)
+            if (jmDictEntry != null) {
+                val title = args.getString(EntryFragment.JMDICT_TITLE_KEY)!!
                 return EntryState(Section.fromJMdictEntry(jmDictEntry, title))
+            }
 
             val kanjidicEntry = args
                 .getParcelable<KanjidicEntry>(EntryFragment.KANJIDIC_ENTRY_KEY)!!
