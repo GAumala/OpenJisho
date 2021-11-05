@@ -11,6 +11,7 @@ sealed class DictSearchResult {
                          val canLoadMore: Boolean,
                          val list:List<Sentence>): DictSearchResult()
     data class Error(val queryText: String,
-                val message: UIText,
-                val isSentence: Boolean): DictSearchResult()
+                     val message: UIText,
+                     val suggestedQueries: List<String>,
+                     val isSentence: Boolean): DictSearchResult()
 }

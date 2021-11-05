@@ -6,6 +6,7 @@ import com.gaumala.openjisho.backend.dict.DictCache
 import com.gaumala.openjisho.common.UIText
 import com.gaumala.openjisho.frontend.dict.actions.PostSearchResults
 import com.gaumala.openjisho.utils.async.MessageThrottler
+import com.gaumala.openjisho.utils.error.BetterQueriesException
 import com.gaumala.openjisho.utils.error.Either
 import com.gaumala.openjisho.utils.error.NotFoundException
 
@@ -13,6 +14,10 @@ import com.gaumala.openjisho.utils.error.NotFoundException
  * A class that calls [DictCache] for dictionary queries and handles
  * the result submitting the appropriate action to the [ActionSink] so
  * that it can compute the next [DictState].
+ *
+ * This class also handles creating descriptive error messages for the user.
+ * If something goes wrong with the search, we handle the error and try to
+ * find the best message.
  *
  * This class is designed with throttling in mind, as we want to delay query
  * execution until the user finishes typing. For that matter, it extends
@@ -43,6 +48,7 @@ class DictSearchBroker(private val cache: DictCache)
                     DictSearchResult.Error(
                         queryText,
                         exceptionToMessage(queryText, it.value),
+                        getQuerySuggestionsFromException(it.value),
                         isSentence = false
                     )
             }
@@ -65,10 +71,20 @@ class DictSearchBroker(private val cache: DictCache)
                     DictSearchResult.Error(
                         queryText,
                         exceptionToMessage(queryText, it.value),
+                        getQuerySuggestionsFromException(it.value),
                         isSentence = true
                     )
             }
             sink.submitAction(PostSearchResults(result))
+        }
+    }
+
+    private fun getQuerySuggestionsFromException(
+        exception: Exception
+    ): List<String> {
+        return when (exception) {
+            is BetterQueriesException -> exception.queries
+            else -> emptyList()
         }
     }
 

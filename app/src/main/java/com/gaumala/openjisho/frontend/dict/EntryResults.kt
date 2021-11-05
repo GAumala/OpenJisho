@@ -8,18 +8,10 @@ sealed class EntryResults {
     data class Loading(val queryText: String): EntryResults()
     data class Ready(val queryText: String,
                      val pagination: PaginationStatus,
-                     val kanjiCount: Int,
-                     val results: List<EntryResult>): EntryResults() {
+                     val items: List<EntryResult>): EntryResults() {
 
-        constructor(queryText: String,
-                    pagination: PaginationStatus,
-                    results: List<EntryResult>)
-                : this(queryText,
-                       pagination,
-                       results.count { it is EntryResult.Kanjidic },
-                       results)
         val nextOffset: Int
-            get() = results.size - kanjiCount
+            get() = items.count { it is EntryResult.JMdict }
 
         val isLoadingMore: Boolean
             get() = pagination == PaginationStatus.isLoadingMore
@@ -37,10 +29,18 @@ sealed class EntryResults {
                 else PaginationStatus.complete
             return copy(
                 pagination = newPaginationStatus,
-                results = results.plus(newPage))
+                items = items.plus(newPage))
         }
 
     }
-    data class Error(val queryText: String,
-                val message: UIText): EntryResults()
+
+    data class Error(
+        val queryText: String,
+        val message: UIText
+    ): EntryResults()
+
+    data class ErrorWithSuggestions(
+        val originalQuery: String,
+        val suggestedQueries: List<String>
+    ): EntryResults()
 }

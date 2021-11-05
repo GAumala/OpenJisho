@@ -89,6 +89,9 @@ class DictFragment : Fragment() {
             },
             onSentenceClicked = { sentence ->
                 dictClickHandler.onSentenceClicked(sentence)
+            },
+            onSuggestionClicked = { suggestedQuery ->
+                inputQueryText(suggestedQuery)
             }
         )
     }

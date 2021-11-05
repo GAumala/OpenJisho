@@ -18,6 +18,9 @@
     <string name="lookup_words">Lookup words</string>
     <string name="not_valid_query">\"%1$s\" is not a valid query</string>
     <string name="not_found">No results found for \"%1$s\"</string>
+    <string name="tip">TIP: </string>
+    <string name="tip_start">try using </string>
+    <string name="tip_end"> for more results.</string>
     <string name="words">Words</string>
     <string name="sentences">Sentences</string>
     <string name="forms_header">Other forms</string>

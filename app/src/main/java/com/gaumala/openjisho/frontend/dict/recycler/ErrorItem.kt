@@ -12,6 +12,9 @@ class ErrorItem(val message: UIText): BindableItem<DictErrorItemBinding>(0) {
     override fun bind(viewBinding: DictErrorItemBinding, position: Int) {
         val textView =  viewBinding.errorText
         textView.text = message.getText(textView.context)
+        // ErrorWithSuggestionsItem and this class share view holders so it's
+        // important to clear data before reusing bindings.
+        viewBinding.tipText.visibility = View.GONE
     }
 
     override fun getLayout() = R.layout.dict_error_item

@@ -13,4 +13,10 @@ sealed class EntryResult: Parcelable {
     @Parcelize
     data class Kanjidic(val entry: KanjidicEntry): EntryResult()
 
+    @Parcelize
+    data class Suggestion(
+        val originalQuery: String,
+        val suggestedQueries: List<String>
+    ): EntryResult()
+
 }

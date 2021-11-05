@@ -9,10 +9,10 @@ sealed class SentenceResults {
     data class Loading(val queryText: String): SentenceResults()
     data class Ready(val queryText: String,
                      val pagination: PaginationStatus,
-                     val results: List<Sentence>): SentenceResults() {
+                     val items: List<Sentence>): SentenceResults() {
 
         val nextOffset: Int
-            get() = results.size
+            get() = items.size
 
         val isLoadingMore: Boolean
             get() = pagination == PaginationStatus.isLoadingMore
@@ -28,7 +28,7 @@ sealed class SentenceResults {
             val newPaginationStatus =
                 if (canLoadMore) PaginationStatus.canLoadMore
                 else PaginationStatus.complete
-            return Ready(queryText, newPaginationStatus, results.plus(newPage))
+            return Ready(queryText, newPaginationStatus, items.plus(newPage))
         }
     }
     class Error(val queryText: String,

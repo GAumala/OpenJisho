@@ -25,15 +25,18 @@ data class PostSearchResults(val result: DictSearchResult)
                         else
                             PaginationStatus.complete
                     val newEntries = EntryResults.Ready(
-                        result.queryText, pagination, result.list)
+                        result.queryText, pagination, result.list
+                    )
                     state.copy(entryResults = newEntries)
                 }
 
                 else if (currentEntries is EntryResults.Ready
                     && currentEntries.isLoadingMoreWith(result.queryText))
-                    state.copy(entryResults =
-                        currentEntries.addPage(
-                            result.list, result.canLoadMore))
+                    state.copy(
+                        entryResults = currentEntries.addPage(
+                            result.list, result.canLoadMore
+                        )
+                    )
                 else
                     state
             }
@@ -48,26 +51,47 @@ data class PostSearchResults(val result: DictSearchResult)
                         else
                             PaginationStatus.complete
                     val newSentences = SentenceResults.Ready(
-                        result.queryText, pagination, result.list)
+                        result.queryText, pagination, result.list
+                    )
                     state.copy(sentenceResults = newSentences)
                 }
 
                 else if (currentSentences is SentenceResults.Ready
                     && currentSentences.isLoadingMoreWith(result.queryText))
-                    state.copy(sentenceResults =
-                        currentSentences.addPage(
-                            result.list, result.canLoadMore))
+                    state.copy(
+                        sentenceResults = currentSentences.addPage(
+                            result.list, result.canLoadMore
+                        )
+                    )
                 else
                     state
             }
 
             is DictSearchResult.Error -> {
                 if (result.isSentence)
-                    state.copy(sentenceResults = SentenceResults.Error(
-                        result.queryText, result.message))
-                else
-                    state.copy(entryResults = EntryResults.Error(
-                        result.queryText, result.message))
+                    state.copy(
+                        sentenceResults = SentenceResults.Error(
+                            result.queryText,
+                            result.message
+                        )
+                    )
+                else {
+                    if (result.suggestedQueries.isEmpty())
+                        state.copy(
+                            entryResults = EntryResults.Error(
+                                result.queryText,
+                                result.message
+                            )
+                        )
+                    else // handle dict query suggestions as a special error
+                        state.copy(
+                            entryResults = EntryResults.ErrorWithSuggestions(
+                                result.queryText,
+                                result.suggestedQueries
+                            )
+                        )
+                }
+
             }
         }
 

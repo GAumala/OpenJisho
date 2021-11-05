@@ -13,7 +13,8 @@ class DictItemFactory(private val isPicker: Boolean,
                       private val pushToHistory: (String) -> Unit,
                       private val onJMdictEntryClicked: (JMdictEntry.Summarized) -> Unit,
                       private val onKanjidicEntryClicked: (KanjidicEntry) -> Unit,
-                      private val onSentenceClicked: (Sentence) -> Unit) {
+                      private val onSentenceClicked: (Sentence) -> Unit,
+                      private val onSuggestionClicked: (String) -> Unit) {
 
     fun fromEntryResults(results: EntryResults): List<BindableItem<*>>  {
         return when (results) {
@@ -23,27 +24,46 @@ class DictItemFactory(private val isPicker: Boolean,
             )
             is EntryResults.Loading -> listOf(LoadingItem())
             is EntryResults.Error -> listOf(ErrorItem(results.message))
-            is EntryResults.Ready -> {
-                if (results.results.isNotEmpty())
-                    pushToHistory(results.queryText)
-                val items = results.results.map {
-                    when (it) {
-                        is EntryResult.JMdict ->
-                            DictJMdictItem(it.entry) {
-                                onJMdictEntryClicked(it.entry)
-                            }
-                        is EntryResult.Kanjidic ->
-                            DictKanjidicItem(it.entry) {
-                                onKanjidicEntryClicked(it.entry)
-                            }
+            is EntryResults.ErrorWithSuggestions ->
+                listOf(
+                    ErrorWithSuggestionsItem(
+                        results.originalQuery,
+                        results.suggestedQueries,
+                        onSuggestionClicked
+                    )
+                )
+            is EntryResults.Ready ->
+                mapReadyResults(results)
+        }
+    }
+
+    private fun mapReadyResults(
+        entryResults: EntryResults.Ready
+    ): List<BindableItem<*>> {
+        if (entryResults.items.isNotEmpty())
+            pushToHistory(entryResults.queryText)
+        val items = entryResults.items.map {
+            when (it) {
+                is EntryResult.JMdict ->
+                    DictJMdictItem(it.entry) {
+                        onJMdictEntryClicked(it.entry)
                     }
+                is EntryResult.Kanjidic ->
+                    DictKanjidicItem(it.entry) {
+                        onKanjidicEntryClicked(it.entry)
+                    }
+                is EntryResult.Suggestion -> {
+                    SuggestionItem(
+                        it.suggestedQueries,
+                        onSuggestionClicked
+                    )
                 }
-                if (results.shouldShowLoadingMore)
-                    items.plus(LoadingMoreItem())
-                else
-                    items
             }
         }
+        return if (entryResults.shouldShowLoadingMore)
+            items.plus(LoadingMoreItem())
+        else
+            items
     }
 
     fun fromSentenceResults(results: SentenceResults): List<BindableItem<*>>  {
@@ -55,9 +75,9 @@ class DictItemFactory(private val isPicker: Boolean,
             is SentenceResults.Loading -> listOf(LoadingItem())
             is SentenceResults.Error -> listOf(ErrorItem(results.message))
             is SentenceResults.Ready -> {
-                if (results.results.isNotEmpty())
+                if (results.items.isNotEmpty())
                     pushToHistory(results.queryText)
-                val items = results.results.map {
+                val items = results.items.map {
                     DictSentenceItem(it) { onSentenceClicked(it) }
                 }
 
