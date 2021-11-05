@@ -36,7 +36,7 @@ class MyListsFragment : Fragment() {
     private val navigator = object: MyListsNavigator {
         override fun goToList(listName: String) {
             val savedState = requireArguments()
-                .getParcelable<DictSavedState>(DICT_SAVED_STATE_KEY)
+                .getParcelable<DictSavedState>(DICT_SAVED_STATE_KEY)!!
 
             parentFragmentManager.runSlideTransition(
                 StudyListFragment.newInstance(
@@ -48,11 +48,9 @@ class MyListsFragment : Fragment() {
 
         override fun goToNewListForm() {
             val savedState = requireArguments()
-                .getParcelable<DictSavedState>(DICT_SAVED_STATE_KEY)
+                .getParcelable<DictSavedState>(DICT_SAVED_STATE_KEY)!!
             val nextFragment =
-                NewListFragment.newInstance(
-                    savedState
-                )
+                NewListFragment.newInstance(savedState)
             parentFragmentManager.runSlideTransition(nextFragment)
         }
 

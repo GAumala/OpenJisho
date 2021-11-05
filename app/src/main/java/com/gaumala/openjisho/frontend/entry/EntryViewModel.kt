@@ -17,13 +17,13 @@ class EntryViewModel: DispatcherViewModel<EntryState, EntrySideEffect>() {
         private fun createInitialState(): EntryState {
             val args = f.requireArguments()
             val jmDictEntry = args.getParcelable<JMdictEntry>(EntryFragment.JMDICT_ENTRY_KEY)
-            val title = args.getString(EntryFragment.JMDICT_TITLE_KEY)
+            val title = args.getString(EntryFragment.JMDICT_TITLE_KEY)!!
 
             if (jmDictEntry != null)
                 return EntryState(Section.fromJMdictEntry(jmDictEntry, title))
 
             val kanjidicEntry = args
-                .getParcelable<KanjidicEntry>(EntryFragment.KANJIDIC_ENTRY_KEY)
+                .getParcelable<KanjidicEntry>(EntryFragment.KANJIDIC_ENTRY_KEY)!!
             return EntryState(Section.fromKanjidicEntry(kanjidicEntry))
         }
 

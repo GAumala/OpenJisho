@@ -90,7 +90,7 @@ class NewListFragment: Fragment() {
         }
 
         repository.getNewListLiveData()
-            .observe(this, newListObserver(nameTextLayout))
+            .observe(this.viewLifecycleOwner, newListObserver(nameTextLayout))
     }
 
 
@@ -138,7 +138,7 @@ class NewListFragment: Fragment() {
 
     private fun openNewList(name: String) {
         val dictSavedState = requireArguments()
-            .getParcelable<DictSavedState>(DICT_SAVED_STATE_KEY)
+            .getParcelable<DictSavedState>(DICT_SAVED_STATE_KEY)!!
         val nextFragment =
             StudyListFragment.newInstance(dictSavedState, name)
         requireFragmentManager()
