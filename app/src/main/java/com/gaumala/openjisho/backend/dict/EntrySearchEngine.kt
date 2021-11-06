@@ -16,9 +16,12 @@ import com.gaumala.openjisho.utils.error.BetterQueriesException
 class EntrySearchEngine(private val dao: DictQueryDao,
                         private val pageSize: Int) {
 
-    private val jmdictRowToEntryResult: (JMdictRow) -> EntryResult = { entryRow ->
+    private fun jmdictRowToEntryResult(
+        targetHeader: String
+    ): (JMdictRow) -> EntryResult.JMdict = { entryRow ->
         val entry = JMdictConverter.fromEntryRow(entryRow)
-        EntryResult.JMdict(JMdictEntry.Summarized.fromEntry(entry))
+        val summarized = JMdictEntry.Summarized.fromEntry(entry, targetHeader)
+        EntryResult.JMdict(summarized)
     }
 
     private val kanjidicRowTowEntryResult: (KanjidicRow) -> EntryResult = { kanjiRow ->
@@ -27,22 +30,22 @@ class EntrySearchEngine(private val dao: DictQueryDao,
     }
 
     private fun mergeEntryResults(
+        query: JMdictQuery,
         jmDictEntries: List<EntryResult>,
         kanjidicEntries: List<EntryResult>,
         suggestion: EntryResult.Suggestion?
     ): List<EntryResult> {
+        val result = ArrayList<EntryResult>()
 
-        if (kanjidicEntries.isEmpty())
-            return jmDictEntries
-
-        if (jmDictEntries.isEmpty())
-            return kanjidicEntries
-
-        val result = ArrayList(jmDictEntries)
-        if (jmDictEntries.size >= 3)
-            result.addAll(3, kanjidicEntries)
-        else
+        if (query is JMdictQuery.Exact) {
+            // for exact queries first add Jmdict results
+            result.addAll(jmDictEntries)
+            // then we add all the kanji results
             result.addAll(kanjidicEntries)
+        } else {
+            // if query not exact, don't add any kanji
+            result.addAll(jmDictEntries)
+        }
 
         if (suggestion != null)
             result.add(suggestion)
@@ -90,7 +93,7 @@ class EntrySearchEngine(private val dao: DictQueryDao,
             ?: throw IllegalArgumentException()
 
         val jmDictRows = dao.lookupEntries(query, pageSize, offset)
-        val jmDictEntries = jmDictRows.map(jmdictRowToEntryResult)
+        val jmDictEntries = jmDictRows.map(jmdictRowToEntryResult(queryText))
         if (offset > 0)
             return jmDictEntries
 
@@ -108,15 +111,17 @@ class EntrySearchEngine(private val dao: DictQueryDao,
             // if the current query has no results, but there are better
             // queries in the suggestions, show this information as an
             // error message
-            if (jmDictEntries.isEmpty()) throw BetterQueriesException(suggestions)
+            if (jmDictEntries.isEmpty() && kanjidicEntries.isEmpty())
+                throw BetterQueriesException(suggestions)
             val suggestionItem = EntryResult.Suggestion(queryText, suggestions)
             return mergeEntryResults(
+                query,
                 jmDictEntries,
                 kanjidicEntries,
                 suggestionItem
             )
         }
 
-        return mergeEntryResults(jmDictEntries, kanjidicEntries, null)
+        return mergeEntryResults(query, jmDictEntries, kanjidicEntries, null)
     }
 }

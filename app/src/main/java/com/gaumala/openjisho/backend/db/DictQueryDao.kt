@@ -28,7 +28,7 @@ abstract class DictQueryDao {
     abstract fun lookupJMdictRowsExact(queryText: String): List<JMdictRow>
 
     @Query("""
-        SELECT $allJMdictRows FROM jmdict
+        SELECT DISTINCT $allJMdictRows FROM jmdict
         JOIN jpn_keywords ON jmdict.id = jpn_keywords.entryId
         WHERE keyword LIKE :queryText LIMIT :limit OFFSET :offset
     """)

@@ -623,13 +623,16 @@ data class JMdictEntry(val entryId: Long,
                           val furigana: String?,
                           val sub: String,
                           val entry: JMdictEntry): Parcelable {
-
+        // This is meant to be used by the FuriganaVew widget
         val itemHeader: String
             get() = if (furigana != null) "{$header;$furigana}"
                     else header
 
         companion object {
-            fun fromEntry(entry: JMdictEntry): Summarized {
+            fun fromEntry(
+                entry: JMdictEntry,
+                targetHeader: String? = null
+            ): Summarized {
                 val kanjiElements = entry.kanjiElements
                 val readingElements = entry.readingElements
                 val senseElements = entry.senseElements
@@ -639,7 +642,10 @@ data class JMdictEntry(val entryId: Long,
                     .joinToString("; ")
 
                 if (kanjiElements.isNotEmpty()) {
-                    val header = kanjiElements.first().text
+                    val header = kanjiElements
+                        .map { it.text }
+                        .find { it == targetHeader }
+                        ?: kanjiElements.first().text
                     val furigana = readingElements.firstOrNull()?.text
                     return Summarized(
                         header = header,
