@@ -1,24 +1,20 @@
 package com.gaumala.openjisho.frontend.dict.actions
 
-import com.gaumala.openjisho.frontend.dict.DictSideEffect
-import com.gaumala.openjisho.frontend.dict.DictState
-import com.gaumala.openjisho.frontend.dict.SentenceResults
 import com.gaumala.mvi.Action
 import com.gaumala.mvi.Update
-import com.gaumala.openjisho.frontend.dict.DictSearchResult
-import com.gaumala.openjisho.frontend.dict.EntryResults
+import com.gaumala.openjisho.frontend.dict.*
 import com.gaumala.openjisho.utils.recycler.PaginationStatus
 
 data class PostSearchResults(val result: DictSearchResult)
     : Action<DictState, DictSideEffect>() {
 
     override fun update(state: DictState): Update<DictState, DictSideEffect> {
-        val newState = when (result) {
+        return when (result) {
             is DictSearchResult.Entries -> {
                val currentEntries = state.entryResults
                 if (currentEntries is EntryResults.Loading
                     && currentEntries.queryText == result.queryText) {
-
+                    // We are setting the first page of dict entries
                     val pagination =
                         if (result.canLoadMore)
                             PaginationStatus.canLoadMore
@@ -27,23 +23,34 @@ data class PostSearchResults(val result: DictSearchResult)
                     val newEntries = EntryResults.Ready(
                         result.queryText, pagination, result.list
                     )
-                    state.copy(entryResults = newEntries)
-                }
+                    // Add a side effect to load suggestions
+                    val jmDictEntries = newEntries.items
+                        .filterIsInstance<EntryResult.JMdict>()
+                    val sideEffect: DictSideEffect =
+                        DictSideEffect.GetSuggestions(
+                            result.queryText, jmDictEntries
+                        )
 
-                else if (currentEntries is EntryResults.Ready
-                    && currentEntries.isLoadingMoreWith(result.queryText))
-                    state.copy(
+                    val newState = state.copy(entryResults = newEntries)
+                    Update(newState, sideEffect)
+
+                } else if (currentEntries is EntryResults.Ready
+                    && currentEntries.isLoadingMoreWith(result.queryText)) {
+                    // We are appending a new page of dict entries
+                    val newState = state.copy(
                         entryResults = currentEntries.addPage(
                             result.list, result.canLoadMore
                         )
                     )
-                else
-                    state
+                    Update(newState)
+
+                } else
+                    Update(state)
             }
 
             is DictSearchResult.Sentences -> {
                 val currentSentences = state.sentenceResults
-                if (currentSentences is SentenceResults.Loading
+                val newState = if (currentSentences is SentenceResults.Loading
                     && currentSentences.queryText == result.queryText) {
                     val pagination =
                         if (result.canLoadMore)
@@ -65,10 +72,11 @@ data class PostSearchResults(val result: DictSearchResult)
                     )
                 else
                     state
+                return Update(newState)
             }
 
             is DictSearchResult.Error -> {
-                if (result.isSentence)
+                val newState = if (result.isSentence)
                     state.copy(
                         sentenceResults = SentenceResults.Error(
                             result.queryText,
@@ -91,10 +99,8 @@ data class PostSearchResults(val result: DictSearchResult)
                             )
                         )
                 }
-
+                return Update(newState)
             }
         }
-
-        return Update(newState)
     }
 }

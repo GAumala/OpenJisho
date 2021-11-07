@@ -7,6 +7,7 @@ import com.gaumala.openjisho.backend.db.KanjidicRow
 import com.gaumala.openjisho.backend.setup.jmdict.JMdictConverter
 import com.gaumala.openjisho.backend.setup.kanjidic.KanjidicConverter
 import com.gaumala.openjisho.common.JMdictEntry
+import com.gaumala.openjisho.frontend.QuerySuggestion
 import com.gaumala.openjisho.frontend.dict.EntryResult
 import com.gaumala.openjisho.utils.error.BetterQueriesException
 
@@ -32,8 +33,7 @@ class EntrySearchEngine(private val dao: DictQueryDao,
     private fun mergeEntryResults(
         query: JMdictQuery,
         jmDictEntries: List<EntryResult>,
-        kanjidicEntries: List<EntryResult>,
-        suggestion: EntryResult.Suggestion?
+        kanjidicEntries: List<EntryResult>
     ): List<EntryResult> {
         val result = ArrayList<EntryResult>()
 
@@ -47,17 +47,28 @@ class EntrySearchEngine(private val dao: DictQueryDao,
             result.addAll(jmDictEntries)
         }
 
-        if (suggestion != null)
-            result.add(suggestion)
-
         return result
     }
+
+    private fun createSuggestion(
+        newQuery: JMdictQuery.Like,
+        newResults: List<JMdictRow>
+    ) = QuerySuggestion(
+        queryText = newQuery.likeText,
+        results = newResults.map {
+            val entry = JMdictConverter.fromEntryRow(it)
+            val summary = JMdictEntry.Summarized.fromEntry(
+                entry, newQuery.likeText
+            )
+            EntryResult.JMdict(summary)
+        }
+    )
 
     private fun getQueriesToSuggest(
         query: JMdictQuery,
         exactQueryResults: List<JMdictRow>,
         pageSize: Int
-    ): List<String> {
+    ): List<QuerySuggestion> {
         // We should only suggest appending wild cards
         // If there's only one page of results and the user
         // isn't already using them.
@@ -82,9 +93,11 @@ class EntrySearchEngine(private val dao: DictQueryDao,
         val shouldAppendPercent = percentResults.isNotEmpty()
                 && percentResults != exactQueryResults
         // Only include suggestions if they actually net new results
-        return ArrayList<String>().apply {
-            if (shouldAppendUnderscore) add(underscoreQuery.likeText)
-            if (shouldAppendPercent) add(percentQuery.likeText)
+        return ArrayList<QuerySuggestion>().apply {
+            if (shouldAppendUnderscore)
+                add(createSuggestion(underscoreQuery, underscoreResults))
+            if (shouldAppendPercent)
+                add(createSuggestion(percentQuery, percentResults))
         }
     }
 
@@ -105,23 +118,28 @@ class EntrySearchEngine(private val dao: DictQueryDao,
         val kanjidicEntries = dao.lookupKanjidicRowExact(kanjidicQuery)
             .map(kanjidicRowTowEntryResult)
 
-        // try to append query suggestions
-        val suggestions = getQueriesToSuggest(query, jmDictRows, pageSize)
-        if (suggestions.isNotEmpty()) {
-            // if the current query has no results, but there are better
-            // queries in the suggestions, show this information as an
-            // error message
-            if (jmDictEntries.isEmpty() && kanjidicEntries.isEmpty())
+        if (jmDictEntries.isEmpty() && kanjidicEntries.isEmpty()) {
+            // If there are no results for the current query,
+            // try to come up with some suggestions in the error message
+            val suggestions = getQueriesToSuggest(query, jmDictRows, pageSize)
+            if (suggestions.isNotEmpty())
                 throw BetterQueriesException(suggestions)
-            val suggestionItem = EntryResult.Suggestion(queryText, suggestions)
-            return mergeEntryResults(
-                query,
-                jmDictEntries,
-                kanjidicEntries,
-                suggestionItem
-            )
         }
 
-        return mergeEntryResults(query, jmDictEntries, kanjidicEntries, null)
+        return mergeEntryResults(query, jmDictEntries, kanjidicEntries)
+    }
+
+    fun getSuggestionsForLastEntryResults(
+        queryText: String,
+        results: List<EntryResult.JMdict>
+    ): List<QuerySuggestion> {
+        val query = JMdictQuery.resolve(queryText)
+            ?: return emptyList() // this should never happen
+
+        val jmDictRows = results.map {
+            val rowsHolder = JMdictConverter.toDBRows(it.summary.entry)
+            rowsHolder.jmDictRow
+        }
+        return getQueriesToSuggest(query, jmDictRows, pageSize)
     }
 }

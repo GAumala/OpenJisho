@@ -2,9 +2,11 @@ package com.gaumala.openjisho.backend.dict
 
 import com.gaumala.openjisho.backend.db.DictQueryDao
 import com.gaumala.openjisho.common.Sentence
+import com.gaumala.openjisho.frontend.QuerySuggestion
 import com.gaumala.openjisho.frontend.dict.EntryResult
 import com.gaumala.openjisho.utils.LRUListCache
 import com.gaumala.openjisho.utils.async.AsyncWorker
+import com.gaumala.openjisho.utils.error.BetterQueriesException
 import com.gaumala.openjisho.utils.error.Either
 import com.gaumala.openjisho.utils.error.NotFoundException
 import kotlin.math.min
@@ -28,6 +30,11 @@ interface DictCache {
     fun searchSentences(queryText: String,
                         offset: Int,
                         callback: ((Either<Exception, List<Sentence>>) -> Unit)? = null)
+    fun getSuggestionsForLastEntryResults(
+        queryText: String,
+        lastResults: List<EntryResult.JMdict>,
+        callback: ((Either<Exception, List<QuerySuggestion>>) -> Unit)? = null
+    )
 
 
     class Default(private val worker: AsyncWorker, dao: DictQueryDao): DictCache {
@@ -63,6 +70,13 @@ interface DictCache {
                 res
         }
 
+        private fun getSuggestionsWorkload(
+            queryText: String,
+            lastResults: List<EntryResult.JMdict>
+        ) = { ->
+            entrySEngine.getSuggestionsForLastEntryResults(queryText, lastResults)
+        }
+
         private fun <T> getCachedPage(cachedList: List<T>, offset: Int): List<T> {
             return if (offset == 0 && cachedList.size <= PAGE_SIZE)
                 cachedList
@@ -85,10 +99,22 @@ interface DictCache {
 
             // Fetch a new page
             val wrappedCallback = { either: Either<Exception, List<EntryResult>> ->
-                if (either is Either.Right) {
-                    val valueToCache =
-                        cachedEntries?.plus(either.value) ?: either.value
-                    entryCache[queryText] = valueToCache
+                when (either) {
+                    is Either.Right -> {
+                        val valueToCache =
+                            cachedEntries?.plus(either.value) ?: either.value
+                        entryCache[queryText] = valueToCache
+                    }
+                    is Either.Left -> {
+                        val ex = either.value
+                        if (ex is BetterQueriesException) {
+                            // if there are better queries, catch the exception
+                            // to cache the suggestions.
+                            ex.suggestions.forEach {
+                                entryCache[it.queryText] = it.results
+                            }
+                        }
+                    }
                 }
                 callback?.invoke(either)
                 Unit
@@ -121,6 +147,30 @@ interface DictCache {
             }
 
             val workload = searchSentencesWorkload(queryText, offset)
+            worker.workInBackground(workload, wrappedCallback)
+        }
+
+        override fun getSuggestionsForLastEntryResults(
+            queryText: String,
+            lastResults: List<EntryResult.JMdict>,
+            callback: ((Either<Exception, List<QuerySuggestion>>) -> Unit)?
+        ) {
+            // This is supposed to be called after loading the first
+            // page so there has to be something cached.
+            val cachedEntries = getCachedEntryResults(queryText) ?: return
+            val wrappedCallback = { either: Either<Exception, List<QuerySuggestion>> ->
+                if (either is Either.Right) {
+                    // Cache every suggestion along with its results
+                    val suggestions = either.value
+                    suggestions.forEach { suggestion ->
+                        entryCache[suggestion.queryText] = suggestion.results
+                    }
+                }
+                callback?.invoke(either)
+                Unit
+            }
+
+            val workload = getSuggestionsWorkload(queryText, lastResults)
             worker.workInBackground(workload, wrappedCallback)
         }
     }

@@ -45,8 +45,8 @@ class DictItemFactory(private val isPicker: Boolean,
         val items = entryResults.items.map {
             when (it) {
                 is EntryResult.JMdict ->
-                    DictJMdictItem(it.entry) {
-                        onJMdictEntryClicked(it.entry)
+                    DictJMdictItem(it.summary) {
+                        onJMdictEntryClicked(it.summary)
                     }
                 is EntryResult.Kanjidic ->
                     DictKanjidicItem(it.entry) {

@@ -216,7 +216,6 @@ class DictUI(owner: LifecycleOwner,
     override fun rebind(state: DictState) {
         entriesAdapter.update(itemFactory.fromEntryResults(state.entryResults))
         sentencesAdapter.update(itemFactory.fromSentenceResults(state.sentenceResults))
-
     }
 
     fun replaceQueryText(queryText: String) {
@@ -228,7 +227,12 @@ class DictUI(owner: LifecycleOwner,
         // search should be immediate, no throttling because input
         // isn't manual
         searchInputWatcher.isEnabled = false
-        searchEditText.setText(queryText)
+        searchEditText.apply {
+            // These two steps are important when replacing
+            // so that the cursor stays at the end of the text
+            setText("")
+            append(queryText)
+        }
         searchInputWatcher.isEnabled = true
 
         updateSearchCompanionButton(queryText)

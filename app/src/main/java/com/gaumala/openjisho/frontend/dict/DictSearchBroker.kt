@@ -5,6 +5,7 @@ import com.gaumala.openjisho.R
 import com.gaumala.openjisho.backend.dict.DictCache
 import com.gaumala.openjisho.common.UIText
 import com.gaumala.openjisho.frontend.dict.actions.PostSearchResults
+import com.gaumala.openjisho.frontend.dict.actions.PostSuggestions
 import com.gaumala.openjisho.utils.async.MessageThrottler
 import com.gaumala.openjisho.utils.error.BetterQueriesException
 import com.gaumala.openjisho.utils.error.Either
@@ -83,7 +84,8 @@ class DictSearchBroker(private val cache: DictCache)
         exception: Exception
     ): List<String> {
         return when (exception) {
-            is BetterQueriesException -> exception.queries
+            is BetterQueriesException ->
+                exception.suggestions.map { it.queryText }
             else -> emptyList()
         }
     }
@@ -105,6 +107,21 @@ class DictSearchBroker(private val cache: DictCache)
                 UIText.Resource(R.string.not_found, listOf(queryText))
             else ->
                 UIText.Resource(R.string.something_wrong)
+        }
+    }
+
+    fun getSuggestionsForLastEntryResults(
+        sink: ActionSink<DictState, DictSideEffect>,
+        queryText: String,
+        jmDictEntries: List<EntryResult.JMdict>
+    ) {
+        cache.getSuggestionsForLastEntryResults(queryText, jmDictEntries) { either ->
+            // No error handling here
+            // If it fails we don't care because it's not that important
+            val suggestions: List<String> =
+                if (either is Either.Right) either.value.map { it.queryText }
+                else emptyList()
+            sink.submitAction(PostSuggestions(queryText, suggestions))
         }
     }
 }

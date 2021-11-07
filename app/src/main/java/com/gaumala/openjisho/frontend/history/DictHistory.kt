@@ -66,7 +66,16 @@ class DictHistory(private val fileHandler: AsyncFileHandler) {
         val mostRecentEntry = entries.firstOrNull()
 
         if (mostRecentEntry != null) {
-            if (newEntry.startsWith(mostRecentEntry))
+            // We want to replace the most recent entry with
+            // the new one if it is a prefix of the new one. So,
+            // if you are typing a long word, you only get
+            // the complete word added to your history. However,
+            // wildcard searches should be treated as a different
+            // thing, so let's make sure we can recognize those.
+            if (newEntry.startsWith(mostRecentEntry)
+                && newEntry != mostRecentEntry + '_'
+                && newEntry != mostRecentEntry + '%'
+                && newEntry != mostRecentEntry + '*')
                 entries.removeFirst()
 
             else if (mostRecentEntry.startsWith(newEntry))

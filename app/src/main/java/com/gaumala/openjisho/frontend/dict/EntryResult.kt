@@ -8,7 +8,7 @@ import kotlinx.android.parcel.Parcelize
 sealed class EntryResult: Parcelable {
 
     @Parcelize
-    data class JMdict(val entry: JMdictEntry.Summarized): EntryResult()
+    data class JMdict(val summary: JMdictEntry.Summarized): EntryResult()
 
     @Parcelize
     data class Kanjidic(val entry: KanjidicEntry): EntryResult()

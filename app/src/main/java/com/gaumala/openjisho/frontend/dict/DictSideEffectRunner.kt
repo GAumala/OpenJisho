@@ -13,6 +13,9 @@ class DictSideEffectRunner(private val searchBroker: DictSearchBroker,
         args: DictSideEffect) {
         if (args is DictSideEffect.Search)
             search(sink, args)
+
+        else if (args is DictSideEffect.GetSuggestions)
+            getSuggestions(sink, args)
     }
 
     private fun search(sink: ActionSink<DictState, DictSideEffect>,
@@ -23,5 +26,14 @@ class DictSideEffectRunner(private val searchBroker: DictSearchBroker,
         else {
             searchBroker.handleMessage(msg)
         }
+    }
+
+    private fun getSuggestions(
+        sink: ActionSink<DictState, DictSideEffect>,
+        args: DictSideEffect.GetSuggestions
+    ) {
+        searchBroker.getSuggestionsForLastEntryResults(
+            sink, args.queryText, args.lastResults
+        )
     }
 }
