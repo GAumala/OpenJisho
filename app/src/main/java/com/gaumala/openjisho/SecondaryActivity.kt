@@ -43,8 +43,9 @@ class SecondaryActivity: AppCompatActivity(), OnTextSubmittedListener {
             return
 
         val screen = SecondaryScreen.fromScreenKey(
-            intent.getStringExtra(SCREEN_KEY))
-        val extraArgs = intent.getBundleExtra(EXTRA_ARGS_KEY)
+            intent.getStringExtra(SCREEN_KEY) ?: ""
+        )
+        val extraArgs = intent.getBundleExtra(EXTRA_ARGS_KEY)!!
         addFragment(screen, extraArgs)
     }
 
