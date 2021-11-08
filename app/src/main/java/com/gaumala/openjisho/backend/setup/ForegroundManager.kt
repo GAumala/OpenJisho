@@ -55,7 +55,7 @@ class ForegroundManager(private val service: Service) {
             .setContentTitle(service.getText(R.string.running_setup))
             .setContentText(step.toString(service))
             .setContentIntent(pendingIntent)
-            .setSmallIcon(R.drawable.status_bar_icon)
+            .setSmallIcon(R.drawable.setup_status_bar_icon_24)
             .setLargeIcon(largeIconBitmap)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
