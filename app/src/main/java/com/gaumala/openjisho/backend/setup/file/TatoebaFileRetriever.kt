@@ -1,7 +1,5 @@
 package com.gaumala.openjisho.backend.setup.file
 
-import android.system.ErrnoException
-import android.system.OsConstants
 import com.gaumala.openjisho.backend.setup.Checkpoint
 import com.gaumala.openjisho.backend.setup.ProgressReporter
 import com.gaumala.openjisho.backend.setup.SetupCheckpointManager
@@ -9,6 +7,7 @@ import com.gaumala.openjisho.common.SetupStep
 import com.gaumala.openjisho.utils.ObservableInputStream
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream
+import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -24,8 +23,7 @@ import java.io.IOException
 class TatoebaFileRetriever(private val cacheDir: File,
                            private val downloadPath: String,
                            private val isTarball: Boolean,
-                           private val downloadCheckpoint: Checkpoint,
-                           private val decompressCheckpoint: Checkpoint,
+                           private val retrievedCheckpoint: Checkpoint,
                            private val downloadStep: SetupStep,
                            private val decompressStep: SetupStep,
                            private val checkpointManager: SetupCheckpointManager,
@@ -37,43 +35,29 @@ class TatoebaFileRetriever(private val cacheDir: File,
                               outputFile: File) {
         val contentLength = compressedFile.length()
         val assertStillActive = { reporter.assertStillActive() }
-        try {
-            compressedFile.inputStream().use { input ->
-                val tarStream =
-                    TarArchiveInputStream(
-                        BZip2CompressorInputStream(
-                            ObservableInputStream(input, assertStillActive) {
-                                val progress = 100 * it / contentLength
-                                reporter.updateProgress(decompressStep, progress.toInt())
-                            })
-                    )
+        BufferedInputStream(compressedFile.inputStream()).use { input ->
+            val tarStream =
+                TarArchiveInputStream(
+                    BZip2CompressorInputStream(
+                        ObservableInputStream(input, assertStillActive) {
+                            val progress = 100 * it / contentLength
+                            reporter.updateProgress(decompressStep, progress.toInt())
+                        })
+                )
 
-                // Assume that there is only one file in the tar ball.
-                // Extract it and exit.
-                var entry = tarStream.nextTarEntry
-                while (entry?.isDirectory == true)
-                    entry = tarStream.nextTarEntry
+            // Assume that there is only one file in the tar ball.
+            // Extract it and exit.
+            var entry = tarStream.nextTarEntry
+            while (entry?.isDirectory == true)
+                entry = tarStream.nextTarEntry
 
 
-                tarStream.use { tarInput ->
-                    FileOutputStream(outputFile).use { output ->
-                        tarInput.copyTo(output)
-                    }
+            tarStream.use { tarInput ->
+                FileOutputStream(outputFile).use { output ->
+                    tarInput.copyTo(output)
                 }
             }
-
-            checkpointManager.markCheckpoint(decompressCheckpoint, true)
-        } catch (ex: IOException) {
-            outputFile.delete()
-            checkpointManager.markCheckpoint(downloadCheckpoint, false)
-            throw ex
-
-        } finally {
-            // no longer needed.
-            // Plus if decompression fails, it should redownload
-            compressedFile.delete()
         }
-
     }
 
     private fun decompress(reporter: ProgressReporter,
@@ -81,38 +65,24 @@ class TatoebaFileRetriever(private val cacheDir: File,
                            outputFile: File) {
         val contentLength = compressedFile.length()
 
-        try {
-            compressedFile.inputStream().use { input ->
-                val assertStillActive = { reporter.assertStillActive() }
-                val bzipStream = BZip2CompressorInputStream(
-                    ObservableInputStream(input, assertStillActive) {
-                        val progress = 100 * it / contentLength
-                        reporter.updateProgress(decompressStep, progress.toInt())
-                    })
+        BufferedInputStream(compressedFile.inputStream(), 1024 * 1024).use { input ->
+            val assertStillActive = { reporter.assertStillActive() }
+            val bzipStream = BZip2CompressorInputStream(
+                ObservableInputStream(input, assertStillActive) {
+                    val progress = 100 * it / contentLength
+                    reporter.updateProgress(decompressStep, progress.toInt())
+                })
 
-                bzipStream.use { tarInput ->
-                    FileOutputStream(outputFile).use { output ->
-                        tarInput.copyTo(output)
-                    }
+            bzipStream.use { tarInput ->
+                FileOutputStream(outputFile).use { output ->
+                    tarInput.copyTo(output)
                 }
             }
-
-            checkpointManager.markCheckpoint(decompressCheckpoint, true)
-        } catch (ex: IOException) {
-            outputFile.delete()
-            checkpointManager.markCheckpoint(downloadCheckpoint, false)
-            throw ex
-
-        } finally {
-            // no longer needed.
-            // Plus if decompression fails, it should redownload
-            compressedFile.delete()
         }
-
     }
 
     private fun alreadyDecompressed() =
-        checkpointManager.reachedCheckpoint(decompressCheckpoint)
+        checkpointManager.reachedCheckpoint(retrievedCheckpoint)
 
     override suspend fun retrieve(reporter: ProgressReporter): File {
         val baseName = File(downloadPath).nameWithoutExtension
@@ -131,33 +101,21 @@ class TatoebaFileRetriever(private val cacheDir: File,
             return outputFile
 
         try {
-            if (! compressedFile.exists())
-                httpDownloader.download(compressedFile)
+            httpDownloader.download(compressedFile)
 
             if (isTarball)
                 decompressTar(reporter, compressedFile, outputFile)
             else
                 decompress(reporter, compressedFile, outputFile)
+
+            checkpointManager.markCheckpoint(retrievedCheckpoint, true)
+            compressedFile.delete()
         } catch (ex: IOException) {
-            handleDownloadException(compressedFile, outputFile, ex)
+            compressedFile.delete()
+            outputFile.delete()
         }
 
         return outputFile
-    }
-
-    private fun handleDownloadException(compressedFile: File, outputFile: File, ex: IOException) {
-        ex.printStackTrace()
-
-        val cause = ex.cause
-        if (cause is ErrnoException) {
-            val errno = cause.errno
-            if (errno == OsConstants.ENOSPC) { // No space left on device
-                compressedFile.delete()
-                outputFile.delete()
-            }
-        }
-
-        throw ex
     }
 
     companion object {
@@ -168,8 +126,7 @@ class TatoebaFileRetriever(private val cacheDir: File,
                 cacheDir = cacheDir,
                 downloadPath = "/exports/per_language/jpn/jpn_sentences.tsv.bz2",
                 isTarball = false,
-                downloadCheckpoint = Checkpoint.sentencesDownloaded,
-                decompressCheckpoint = Checkpoint.sentencesRetrieved,
+                retrievedCheckpoint = Checkpoint.sentencesRetrieved,
                 downloadStep = SetupStep.downloadingTatoebaSentences,
                 decompressStep = SetupStep.decompressingTatoebaSentences,
                 checkpointManager = checkpointManager,
@@ -184,8 +141,7 @@ class TatoebaFileRetriever(private val cacheDir: File,
                 cacheDir = cacheDir,
                 downloadPath = "/exports/per_language/eng/eng_sentences.tsv.bz2",
                 isTarball = false,
-                downloadCheckpoint = Checkpoint.translationsDownloaded,
-                decompressCheckpoint = Checkpoint.translationsRetrieved,
+                retrievedCheckpoint = Checkpoint.translationsRetrieved,
                 downloadStep = SetupStep.downloadingTatoebaTranslations,
                 decompressStep = SetupStep.decompressingTatoebaTranslations,
                 checkpointManager = checkpointManager,
@@ -200,12 +156,11 @@ class TatoebaFileRetriever(private val cacheDir: File,
                 cacheDir = cacheDir,
                 downloadPath = "/exports/jpn_indices.tar.bz2",
                 isTarball = true,
-                downloadCheckpoint = Checkpoint.indicesDownloaded,
-                decompressCheckpoint = Checkpoint.indicesRetrieved,
+                retrievedCheckpoint = Checkpoint.indicesRetrieved,
                 downloadStep = SetupStep.downloadingTatoebaIndices,
                 decompressStep = SetupStep.decompressingTatoebaIndices,
                 checkpointManager = checkpointManager,
-                expectedSize = 85 * 1024 * 1024
+                expectedSize = 3 * 1024 * 1024
             )
         }
     }

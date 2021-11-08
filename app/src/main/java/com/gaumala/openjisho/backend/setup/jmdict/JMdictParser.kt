@@ -6,6 +6,7 @@ import java.io.File
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import org.xmlpull.v1.XmlPullParserFactory
+import java.io.BufferedReader
 import java.lang.IllegalStateException
 import java.util.*
 
@@ -231,7 +232,7 @@ object JMdictParser {
         factory.isNamespaceAware = true
         val xpp = factory.newPullParser()
         xpp.setFeature(Xml.FEATURE_RELAXED, true)
-        xpp.setInput(dictFile.reader())
+        xpp.setInput(BufferedReader(dictFile.reader()))
 
 
         while (xpp.eventType != XmlPullParser.END_DOCUMENT) {

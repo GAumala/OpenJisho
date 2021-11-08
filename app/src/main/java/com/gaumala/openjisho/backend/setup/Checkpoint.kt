@@ -13,16 +13,10 @@ enum class Checkpoint {
     jmdictReady,
     /* The KANJIDIC table has been successfully populated */
     kanjidicReady,
-    /* The Tatoeba sentences file has been downloaded */
-    sentencesDownloaded,
     /* The Tatoeba sentences file has been downloaded and decompressed */
     sentencesRetrieved,
-    /* The Tatoeba translations file has been downloaded */
-    translationsDownloaded,
     /* The Tatoeba translations file has been downloaded and decompressed */
     translationsRetrieved,
-    /* The Tatoeba indices file has been downloaded */
-    indicesDownloaded,
     /* The Tatoeba indices file has been downloaded and decompressed */
     indicesRetrieved,
     /* The Tatoeba japanese sentences table has been successfully populated */
