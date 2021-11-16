@@ -54,6 +54,54 @@ class EntrySearchEngineTest {
     }
 
     @Test
+    fun `if exact query has results, it should sort results correctly`() {
+        val dictQueryDao = mockk<DictQueryDao>()
+        // mock dao to return appropriate rows with exact query
+        every {
+            dictQueryDao.lookupEntries(JMdictQuery.Exact("入学"), PAGE_SIZE, 0)
+        } returns listOf(sampleJmdictRow2)
+        // mock dao to return appropriate kanjidic rows without sorting
+        every {
+            dictQueryDao.lookupKanjidicRowExact(listOf("入", "学"))
+        } returns listOf(sampleKanjidicRow2, sampleKanjidicRow1)
+
+        val engine = EntrySearchEngine(dictQueryDao, PAGE_SIZE)
+        val results = engine.search("入学", 0)
+
+        // assert that the jmdict entry is first because the header
+        // matches the query text and that the following kanji are
+        // in the same order in which they appear in the query text.
+        results `should equal` listOf(
+            EntryResult.JMdict(sampleJmdictSummary2),
+            EntryResult.Kanjidic(sampleKanjidicEntry1),
+            EntryResult.Kanjidic(sampleKanjidicEntry2)
+        )
+    }
+
+    @Test
+    fun `if english query has results, it should sort results correctly`() {
+        val dictQueryDao = mockk<DictQueryDao>()
+        // mock dao to return some rows without sorting
+        every {
+            dictQueryDao.lookupEntries(
+                JMdictQuery.EnglishMatch("matriculation"),
+                PAGE_SIZE,
+                0
+            )
+        } returns listOf(sampleJmdictRow1, sampleJmdictRow2)
+
+        val engine = EntrySearchEngine(dictQueryDao, PAGE_SIZE)
+        val results = engine.search("matriculation", 0)
+
+        // assert that the jmdict entry for "入学" is first because
+        // the only sense item (Matriculation) matches the query text
+        results `should equal` listOf(
+            EntryResult.JMdict(sampleJmdictSummary2),
+            EntryResult.JMdict(sampleJmdictSummary1)
+        )
+    }
+
+    @Test
     fun `if exact query has NO results, but both suggestion have more results, should throw custom exception`() {
         val dictQueryDao = mockk<DictQueryDao>()
         // mock dao to return 0 rows with exact query
@@ -222,7 +270,7 @@ class EntrySearchEngineTest {
         val sampleJmdictEntry2 = JMdictEntry(
             entryId = 1L,
             kanjiElements = listOf(
-                JMdictEntry.Element("入学 ", tags = emptyList())
+                JMdictEntry.Element("入学", tags = emptyList())
             ),
             readingElements = listOf(
                 JMdictEntry.Element(" にゅうがく", tags = emptyList())
@@ -259,6 +307,16 @@ class EntrySearchEngineTest {
             onReadings = listOf("いり"),
             kunReadings = listOf("いり")
         )
+        val sampleKanjidicEntry2 = KanjidicEntry(
+            literal = "学",
+            grade = 1,
+            jlpt = 5,
+            strokeCount = 8,
+            meanings = listOf("Education"),
+            onReadings = listOf("がく"),
+            kunReadings = listOf("がく")
+        )
         val sampleKanjidicRow1 = KanjidicConverter.toDBRow(sampleKanjidicEntry1)
+        val sampleKanjidicRow2 = KanjidicConverter.toDBRow(sampleKanjidicEntry2)
     }
 }

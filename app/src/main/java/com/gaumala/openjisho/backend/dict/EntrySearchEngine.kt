@@ -30,21 +30,58 @@ class EntrySearchEngine(private val dao: DictQueryDao,
         EntryResult.Kanjidic(entry)
     }
 
+    private fun EntryResult.JMdict.hasExactKanjiOrReading(target: String): Boolean {
+        val matchingKanji = summary.entry.kanjiElements.find {
+            it.text == target
+        }
+        val matchingReading = summary.entry.readingElements.find {
+            it.text == target
+        }
+        return matchingKanji != null || matchingReading != null
+    }
+
+    private fun EntryResult.JMdict.hasExactSense(target: String): Boolean {
+        val matchingSense = summary.entry.senseElements.find { senseItem ->
+            val matchingGloss = senseItem.glossItems.find {
+                it.toLowerCase() == target.toLowerCase()
+            }
+            matchingGloss != null
+        }
+        return matchingSense != null
+    }
+
     private fun mergeEntryResults(
         query: JMdictQuery,
-        jmDictEntries: List<EntryResult>,
+        jmDictEntries: List<EntryResult.JMdict>,
         kanjidicEntries: List<EntryResult>
     ): List<EntryResult> {
-        val result = ArrayList<EntryResult>()
-
-        if (query is JMdictQuery.Exact) {
-            // for exact queries first add Jmdict results
-            result.addAll(jmDictEntries)
-            // then we add all the kanji results
-            result.addAll(kanjidicEntries)
-        } else {
-            // if query not exact, don't add any kanji
-            result.addAll(jmDictEntries)
+        val result = ArrayList<EntryResult>(kanjidicEntries)
+        when (query) {
+            is JMdictQuery.Exact -> {
+                // for exact queries we place jmdict entries that have
+                // the exact query text in a kanji or reading
+                // element at the top.
+                // The rest are placed at the bottom.
+                jmDictEntries.forEach { jmdictEntry ->
+                    if (jmdictEntry.hasExactKanjiOrReading(query.queryText)) {
+                        result.add(0, jmdictEntry)
+                    } else result.add(jmdictEntry)
+                }
+            }
+            is JMdictQuery.EnglishMatch -> {
+                // for queries in English we place jmdict entries that have
+                // the exact query text in sense element at the top.
+                // The rest are placed at the bottom.
+                jmDictEntries.forEach { jmdictEntry ->
+                    if (jmdictEntry.hasExactSense(query.englishText)) {
+                        result.add(0, jmdictEntry)
+                    } else result.add(jmdictEntry)
+                }
+            }
+            else -> {
+                // Other query types don't need special sorting
+                result.addAll(jmDictEntries)
+            }
         }
 
         return result
@@ -101,23 +138,40 @@ class EntrySearchEngine(private val dao: DictQueryDao,
         }
     }
 
+    private fun getKanjidicResults(query: JMdictQuery): List<EntryResult> {
+        // We only show kanji for exact queries
+        if (query !is JMdictQuery.Exact) return emptyList()
+
+        val kanjiList = query.queryText
+            .toCharArray()
+            .map { it.toString() }
+
+        // first page should include kanjidic entries
+        return dao.lookupKanjidicRowExact(kanjiList)
+            .sortedWith(KanjidicComparator(query.queryText))
+            .map(kanjidicRowTowEntryResult)
+    }
+
     fun search(queryText: String, offset: Int): List<EntryResult> {
         val query = JMdictQuery.resolve(queryText)
             ?: throw IllegalArgumentException()
 
         val jmDictRows = dao.lookupEntries(query, pageSize, offset)
         val jmDictEntries = jmDictRows.map(jmdictRowToEntryResult(queryText))
-        if (offset > 0)
-            return jmDictEntries
+        if (offset > 0) // return the nth page
+            return mergeEntryResults(query, jmDictEntries, emptyList())
 
-        // First page
-        val kanjidicQuery = queryText.toCharArray()
-            .map { it.toString() }
+        // Create the first page
 
-        // first page should include kanjidic entries
-        val kanjidicEntries = dao.lookupKanjidicRowExact(kanjidicQuery)
-            .map(kanjidicRowTowEntryResult)
+        // We only show kanji for exact queries
+        val kanjidicQuery =
+            if (query is JMdictQuery.Exact) {
+                queryText.toCharArray()
+                    .map { it.toString() }
+            } else emptyList()
 
+        // first page should include kanjidic results
+        val kanjidicEntries = getKanjidicResults(query)
         if (jmDictEntries.isEmpty() && kanjidicEntries.isEmpty()) {
             // If there are no results for the current query,
             // try to come up with some suggestions in the error message
@@ -141,5 +195,27 @@ class EntrySearchEngine(private val dao: DictQueryDao,
             rowsHolder.jmDictRow
         }
         return getQueriesToSuggest(query, jmDictRows, pageSize)
+    }
+
+    private class KanjidicComparator(val queryText: String): Comparator<KanjidicRow> {
+        override fun compare(left: KanjidicRow?, right: KanjidicRow?): Int {
+            val leftIndex = if (left == null) -1
+                            else queryText.indexOf(left.literal)
+            val rightIndex = if (right == null) -1 else
+                             queryText.indexOf(right.literal)
+            if (leftIndex == -1 && rightIndex != -1) {
+                return 1
+            } else if (leftIndex != -1 && rightIndex == -1) {
+                return -1
+            } else if (leftIndex == -1 && rightIndex == -1) {
+                return 0
+            }
+            if (leftIndex < rightIndex) {
+                return -1
+            } else if (leftIndex > rightIndex) {
+                return 1
+            }
+            return 0
+        }
     }
 }
