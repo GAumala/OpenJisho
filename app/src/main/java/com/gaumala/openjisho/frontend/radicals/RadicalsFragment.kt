@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -34,12 +35,13 @@ class RadicalsFragment : Fragment() {
 
         const val DICT_SAVED_STATE_KEY = "dictSavedState"
         const val IS_PICKER_KEY = "isPicker"
+        const val QUERY_TEXT_KEY = "queryText"
     }
 
     private lateinit var ui: RadicalsUI
 
     private val viewModel by lazy {
-        ViewModelProvider(this, RadicalsViewModelFactory(this))
+        ViewModelProvider(this, RadicalsViewModel.Factory(this))
             .get(RadicalsViewModel::class.java)
     }
     private val onBackPressedCallback = object: OnBackPressedCallback(true) {
@@ -63,10 +65,25 @@ class RadicalsFragment : Fragment() {
             view = view,
             returnToDict = returnToDict,
             sink = viewModel.userActionSink,
-            liveState = viewModel.liveState)
+            liveState = viewModel.liveState,
+            initialText = getInitialText(savedInstanceState))
         ui.subscribe()
 
         return view
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(QUERY_TEXT_KEY, ui.getQueryText())
+    }
+
+    private fun getInitialText(savedInstanceState: Bundle?): String {
+        val savedText = savedInstanceState?.getString(QUERY_TEXT_KEY)
+        if (savedText != null) return savedText
+
+        return requireArguments()
+            .getParcelable<DictSavedState>(DICT_SAVED_STATE_KEY)
+            ?.queryText ?: ""
     }
 
     private val returnToDict = { queryText: String ->

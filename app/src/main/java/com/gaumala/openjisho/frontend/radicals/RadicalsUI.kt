@@ -1,6 +1,7 @@
 package com.gaumala.openjisho.frontend.radicals
 
 import android.content.Context
+import android.text.InputType
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
@@ -9,8 +10,6 @@ import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.gaumala.openjisho.R
-import com.gaumala.openjisho.frontend.radicals.actions.AppendKanji
-import com.gaumala.openjisho.frontend.radicals.actions.DeleteKanji
 import com.gaumala.openjisho.frontend.radicals.actions.ToggleRadical
 import com.gaumala.openjisho.frontend.radicals.recycler.RadicalsItemFactory
 import com.gaumala.mvi.ActionSink
@@ -27,12 +26,12 @@ class RadicalsUI(
     view: View,
     private val sink: ActionSink<RadicalsState, RadicalsSideEffect>,
     private val returnToDict: (String) -> Unit,
+    initialText: String,
     liveState: LiveData<RadicalsState>
     ): BaseUI<RadicalsState>(owner, liveState) {
 
     private val ctx: Context = view.context
     private val dictButton: View = view.findViewById(R.id.dict_search_icon)
-    private val searchInputView: View = view.findViewById(R.id.search_input)
     private val searchEditText: EditText = view.findViewById(R.id.search_edit_text)
     private val radicalsRecycler: RecyclerView = view.findViewById(R.id.radicals_recycler)
     private val resultsRecycler: RecyclerView = view.findViewById(R.id.results_recycler)
@@ -47,8 +46,9 @@ class RadicalsUI(
         sink.submitAction(ToggleRadical(it))
     }
     private val onKanjiSelected: (String) -> Unit = {
-        sink.submitAction(AppendKanji(it))
+        addKanjiToQuery(it)
     }
+
     private val itemFactory =
         RadicalsItemFactory(onRadicalSelected, onKanjiSelected)
 
@@ -58,6 +58,30 @@ class RadicalsUI(
     init {
         setupRecyclerView()
         setupArt(view)
+        setupSearchEditText(initialText)
+    }
+
+    private fun setupSearchEditText(initialText: String) {
+        // We don't want soft keyboard to appear because
+        // we have the radicals grid as keyboard, so there's
+        // no space, but we want the cursor to be visible and
+        // text to be selectable
+        searchEditText.apply {
+            showSoftInputOnFocus = false
+            inputType = InputType.TYPE_NULL;
+            setRawInputType(InputType.TYPE_CLASS_TEXT);
+            setTextIsSelectable(true)
+
+            setText("")
+            append(initialText)
+            updateSearchCompanionButton(initialText)
+        }
+        searchCompanionButton.setOnClickListener {
+            removeKanjiAtCursor()
+        }
+        dictButton.setOnClickListener {
+            returnToDict(searchEditText.text.toString())
+        }
     }
 
     private fun setupArt(view: View) {
@@ -92,24 +116,32 @@ class RadicalsUI(
     private fun updateSearchCompanionButton(searchText: String) {
         val newImageLevel = if (searchText.isEmpty()) 0 else 1
         searchCompanionButton.setImageLevel(newImageLevel)
-
-        searchCompanionButton.setOnClickListener(
-            if (searchText.isEmpty()) null
-            else View.OnClickListener{
-                sink.submitAction(DeleteKanji())
-            })
     }
 
-    private fun rebindQueryText(queryText: String) {
-        val currentText = searchEditText.text.toString()
-        if (currentText != queryText) {
-            searchEditText.setText("")
-            if (queryText.isNotEmpty())
-                searchEditText.append(queryText)
+    private fun removeKanjiAtCursor() {
+        searchEditText.apply {
+            if (text.isEmpty()) return@apply
 
-            updateSearchCompanionButton(queryText)
+            val end = selectionEnd
+            var start = selectionStart
+            if (start == end) {
+                start = end - 1
+            }
+            text.delete(start, end)
+            updateSearchCompanionButton(text.toString())
         }
     }
+
+    private fun addKanjiToQuery(kanji: String) {
+        searchEditText.apply {
+            val position = selectionStart.coerceAtLeast(selectionEnd)
+            if (position == -1) append(kanji)
+            else text.insert(position, kanji)
+
+            updateSearchCompanionButton(text.toString())
+        }
+    }
+
 
     private fun createRadicalChip(radical: RadicalIndex): Chip {
         val chip = Chip(ctx)
@@ -142,10 +174,6 @@ class RadicalsUI(
     }
 
     override fun rebind(state: RadicalsState) {
-        dictButton.setOnClickListener { returnToDict(state.queryText) }
-        searchInputView.setOnClickListener { returnToDict(state.queryText) }
-
-        rebindQueryText(state.queryText)
 
         if (lastRadicalList !== state.radicals) {
             rebindSelectedRadicals(state.radicals)
@@ -160,7 +188,11 @@ class RadicalsUI(
     }
 
     fun onBackPressed() {
-        val state = liveState.value!!
-        returnToDict(state.queryText)
+        returnToDict(getQueryText())
+    }
+
+    // get query text so that we can persist it
+    fun getQueryText(): String {
+        return searchEditText.text.toString()
     }
 }

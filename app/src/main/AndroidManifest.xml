@@ -15,7 +15,7 @@
             android:supportsRtl="true"
             android:theme="@style/Theme.MyApp">
         <activity android:name="com.gaumala.openjisho.MainActivity"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

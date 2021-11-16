@@ -48,10 +48,8 @@
                 android:layout_marginStart="22dp"
                 android:layout_weight="1"
                 android:background="@null"
-                android:focusable="false"
                 android:hint="@string/search"
                 android:imeOptions="actionDone"
-                android:inputType="none"
                 android:maxLines="1"
                 android:textIsSelectable="true"
                 android:textSize="20sp" />

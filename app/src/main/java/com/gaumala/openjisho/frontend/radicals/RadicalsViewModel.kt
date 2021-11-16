@@ -19,8 +19,8 @@ class RadicalsViewModel: DispatcherViewModel<RadicalsState, RadicalsSideEffect>(
 
             return RadicalsState(
                 radicals = RadicalIndex.listAll(),
-                results = KanjiResults.Ready(emptyList()),
-                queryText = dictSavedState?.queryText ?: "")
+                results = KanjiResults.Ready(emptyList())
+            )
         }
 
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
