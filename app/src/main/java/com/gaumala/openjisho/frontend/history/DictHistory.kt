@@ -6,7 +6,7 @@ import org.json.JSONException
 import java.util.*
 
 class DictHistory(private val fileHandler: AsyncFileHandler) {
-    private lateinit var entries: LinkedList<String>
+    private lateinit var entries: List<String>
 
     private val parseEntries: (String) -> LinkedList<String> = {
         val list = LinkedList<String>()
@@ -27,28 +27,9 @@ class DictHistory(private val fileHandler: AsyncFileHandler) {
         list
     }
 
-    private fun copyEntriesConcurrent(): List<String> {
-        do {
-            val failed: Boolean = try {
-                return entries.toList()
-            } catch (ex: NoSuchElementException) {
-                // this method is called in a background thread so
-                // it's possible that the main thread is removing elements
-                // from the list while we are consuming the data here.
-                // I should probably use a better data structure for concurrency
-                // but for now let's just retry until it works.
-                true
-            }
-        } while (failed)
-
-        throw UnknownError("Broke out infinite loop")
-    }
-
     private val serializeEntries: () -> String = {
         val array = JSONArray()
-        val entriesCopy = copyEntriesConcurrent()
-
-        entriesCopy.forEach { array.put(it) }
+        entries.forEach { array.put(it) }
         array.toString(4)
     }
 
@@ -62,8 +43,8 @@ class DictHistory(private val fileHandler: AsyncFileHandler) {
     }
 
     private fun updateWithNewEntry(newEntry: String) {
-
-        val mostRecentEntry = entries.firstOrNull()
+        val entriesCopy = LinkedList(entries)
+        val mostRecentEntry = entriesCopy.firstOrNull()
 
         if (mostRecentEntry != null) {
             // We want to replace the most recent entry with
@@ -76,43 +57,45 @@ class DictHistory(private val fileHandler: AsyncFileHandler) {
                 && newEntry != mostRecentEntry + '_'
                 && newEntry != mostRecentEntry + '%'
                 && newEntry != mostRecentEntry + '*')
-                entries.removeFirst()
+                entriesCopy.removeFirst()
 
-            else if (mostRecentEntry.startsWith(newEntry))
-                return
+            val existingPosition = entriesCopy.indexOf(newEntry)
+            if (existingPosition >= 0)
+                entriesCopy.removeAt(existingPosition)
         }
 
-        removeEntry(newEntry)
-        entries.addFirst(newEntry)
+        entriesCopy.addFirst(newEntry)
+        entries = entriesCopy
     }
 
     private fun ensureListNotTooBig() {
-        while(entries.size > maxSize)
-            entries.removeLast()
-    }
-
-    private fun removeEntry(entry: String) {
-        val existingPosition = entries.indexOf(entry)
-        if (existingPosition >= 0)
-            entries.removeAt(existingPosition)
+        val entriesCopy = LinkedList(entries)
+        while(entriesCopy.size > maxSize)
+            entriesCopy.removeLast()
+        entries = entriesCopy
     }
 
     fun removeAt(position: Int) {
-        entries.removeAt(position)
+        if (! ::entries.isInitialized) return
+
+        val entriesCopy = LinkedList(entries)
+        if (position < 0 || position >= entriesCopy.size) return
+
+        entriesCopy.removeAt(position)
+        entries = entriesCopy
+
         fileHandler.write(serializeEntries)
     }
 
     fun read(): ArrayList<String>? {
-        if (! ::entries.isInitialized)
-            return null
+        if (! ::entries.isInitialized) return null
 
         return ArrayList(entries)
     }
 
 
     fun push(newEntry: String) {
-        if (! ::entries.isInitialized)
-            return
+        if (! ::entries.isInitialized) return
 
         updateWithNewEntry(newEntry)
         ensureListNotTooBig()

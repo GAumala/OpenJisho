@@ -1,6 +1,5 @@
 package com.gaumala.openjisho.frontend.history
 
-import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.gaumala.openjisho.utils.AsyncFileHandler

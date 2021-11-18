@@ -213,9 +213,37 @@ class DictUI(owner: LifecycleOwner,
         }
     }
 
+    /*
+     * We want to call this everytime rebind() runs so that the
+     * history is always up to date. But before updating, we want
+     * to make sure that the results we are showing match the
+     * current query.
+     */
+    private fun pushResultsToHistory(
+        entryResults: EntryResults, sentenceResults: SentenceResults
+    ) {
+        val currentQueryText = searchEditText.text.toString()
+        val hasEntryResultsForCurrentQuery =
+            entryResults is EntryResults.Ready
+                && entryResults.queryText == currentQueryText
+        val hasSentenceResultsForCurrentQuery =
+            sentenceResults is SentenceResults.Ready
+                && sentenceResults.queryText == currentQueryText
+
+        if (hasEntryResultsForCurrentQuery
+            || hasSentenceResultsForCurrentQuery) {
+            historyWidget.push(currentQueryText)
+        }
+    }
+
     override fun rebind(state: DictState) {
-        entriesAdapter.update(itemFactory.fromEntryResults(state.entryResults))
-        sentencesAdapter.update(itemFactory.fromSentenceResults(state.sentenceResults))
+        entriesAdapter.update(
+            itemFactory.fromEntryResults(state.entryResults)
+        )
+        sentencesAdapter.update(
+            itemFactory.fromSentenceResults(state.sentenceResults)
+        )
+        pushResultsToHistory(state.entryResults, state.sentenceResults)
     }
 
     fun replaceQueryText(queryText: String) {

@@ -80,9 +80,9 @@ class DictFragment : Fragment() {
     private val itemFactory by lazy {
         DictItemFactory(
             isPicker = isPicker,
-            pushToHistory = { historyWidget.push(it) },
             onJMdictEntryClicked = { entry ->
                 dictClickHandler.onJMdictEntryClicked(entry)
+                historyWidget.push(entry.header)
             },
             onKanjidicEntryClicked = {entry ->
                 dictClickHandler.onKanjidicEntryClicked(entry)

@@ -10,7 +10,6 @@ import com.xwray.groupie.viewbinding.BindableItem
 
 
 class DictItemFactory(private val isPicker: Boolean,
-                      private val pushToHistory: (String) -> Unit,
                       private val onJMdictEntryClicked: (JMdictEntry.Summarized) -> Unit,
                       private val onKanjidicEntryClicked: (KanjidicEntry) -> Unit,
                       private val onSentenceClicked: (Sentence) -> Unit,
@@ -40,8 +39,6 @@ class DictItemFactory(private val isPicker: Boolean,
     private fun mapReadyResults(
         entryResults: EntryResults.Ready
     ): List<BindableItem<*>> {
-        if (entryResults.items.isNotEmpty())
-            pushToHistory(entryResults.queryText)
         val items = entryResults.items.map {
             when (it) {
                 is EntryResult.JMdict ->
@@ -75,8 +72,6 @@ class DictItemFactory(private val isPicker: Boolean,
             is SentenceResults.Loading -> listOf(LoadingItem())
             is SentenceResults.Error -> listOf(ErrorItem(results.message))
             is SentenceResults.Ready -> {
-                if (results.items.isNotEmpty())
-                    pushToHistory(results.queryText)
                 val items = results.items.map {
                     DictSentenceItem(it) { onSentenceClicked(it) }
                 }
