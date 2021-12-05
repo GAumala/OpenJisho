@@ -12,6 +12,15 @@ downloaded during first time setup.
   <img src="https://user-images.githubusercontent.com/5729175/121984920-7265f500-cd59-11eb-92ea-9418487ade3e.png" />
 </p>
 
+## Development
+
+Use a recent version of Android Studio. I'm currently using Arctic Fox, but
+any 4.0+ version may work.
+
+Before building the app you need to get some dictionary files that are not 
+included in this repository. Just run `make` at the project root and the 
+files should download to the resources directory.
+
 ## LICENSE
 
 OpenJisho by Gabriel Aumala is licensed under GPL-3.
