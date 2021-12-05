@@ -2,13 +2,36 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="16dp"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        android:paddingBottom="16dp">
 
+        <TextView
+            android:id="@+id/version_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?textAppearanceBody2"
+            android:textColor="@color/material_on_surface_emphasis_medium"
+            tools:text="1.0"
+            android:gravity="start"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+        <TextView
+            android:id="@+id/version_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/version"
+            android:textAppearance="?textAppearanceBody2"
+            android:textColor="@color/material_on_surface_emphasis_medium"
+            android:layout_marginEnd="4dp"
+            android:gravity="start"
+            app:layout_constraintEnd_toStartOf="@id/version_text"
+            app:layout_constraintTop_toTopOf="@id/version_text"/>
 
         <ImageView
             android:id="@+id/logo"
@@ -42,7 +65,6 @@
             android:text="@string/by_author"
             app:layout_constraintTop_toBottomOf="@id/title_text"
         />
-
 
         <Button
             android:id="@+id/github_button"

@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
+import com.gaumala.openjisho.BuildConfig
 import com.gaumala.openjisho.R
 import com.gaumala.openjisho.utils.SystemUIHelper
 
@@ -36,8 +37,10 @@ class AboutFragment : Fragment() {
 
     private fun bindView(view: View) {
         val bodyText = view.findViewById<TextView>(R.id.body_text)
+        val versionText = view.findViewById<TextView>(R.id.version_text)
         val ghButton = view.findViewById<TextView>(R.id.github_button)
         val rawBodyHtml = getString(R.string.about_app_text_body)
+        versionText.text = BuildConfig.VERSION_NAME
         bodyText.text = HtmlCompat.fromHtml(
             rawBodyHtml,
             HtmlCompat.FROM_HTML_MODE_LEGACY
