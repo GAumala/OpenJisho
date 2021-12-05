@@ -25,7 +25,7 @@ class EntrySearchEngine(private val dao: DictQueryDao,
         EntryResult.JMdict(summarized)
     }
 
-    private val kanjidicRowTowEntryResult: (KanjidicRow) -> EntryResult = { kanjiRow ->
+    private val kanjidicRowToEntryResult: (KanjidicRow) -> EntryResult = { kanjiRow ->
         val entry = KanjidicConverter.fromKanjiRow(kanjiRow)
         EntryResult.Kanjidic(entry)
     }
@@ -149,7 +149,7 @@ class EntrySearchEngine(private val dao: DictQueryDao,
         // first page should include kanjidic entries
         return dao.lookupKanjidicRowExact(kanjiList)
             .sortedWith(KanjidicComparator(query.queryText))
-            .map(kanjidicRowTowEntryResult)
+            .map(kanjidicRowToEntryResult)
     }
 
     fun search(queryText: String, offset: Int): List<EntryResult> {
@@ -162,13 +162,6 @@ class EntrySearchEngine(private val dao: DictQueryDao,
             return mergeEntryResults(query, jmDictEntries, emptyList())
 
         // Create the first page
-
-        // We only show kanji for exact queries
-        val kanjidicQuery =
-            if (query is JMdictQuery.Exact) {
-                queryText.toCharArray()
-                    .map { it.toString() }
-            } else emptyList()
 
         // first page should include kanjidic results
         val kanjidicEntries = getKanjidicResults(query)
@@ -195,27 +188,5 @@ class EntrySearchEngine(private val dao: DictQueryDao,
             rowsHolder.jmDictRow
         }
         return getQueriesToSuggest(query, jmDictRows, pageSize)
-    }
-
-    private class KanjidicComparator(val queryText: String): Comparator<KanjidicRow> {
-        override fun compare(left: KanjidicRow?, right: KanjidicRow?): Int {
-            val leftIndex = if (left == null) -1
-                            else queryText.indexOf(left.literal)
-            val rightIndex = if (right == null) -1 else
-                             queryText.indexOf(right.literal)
-            if (leftIndex == -1 && rightIndex != -1) {
-                return 1
-            } else if (leftIndex != -1 && rightIndex == -1) {
-                return -1
-            } else if (leftIndex == -1 && rightIndex == -1) {
-                return 0
-            }
-            if (leftIndex < rightIndex) {
-                return -1
-            } else if (leftIndex > rightIndex) {
-                return 1
-            }
-            return 0
-        }
     }
 }
