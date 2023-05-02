@@ -11,8 +11,14 @@ fun DictQueryDao.lookupSentencesWithJapaneseQuery(query: TatoebaQuery.Japanese,
     val sentenceKeys =
         lookupSentenceIdsMatchingIndices(query.matchText, limit, offset)
 
-    val sentences = lookupSentencesById(sentenceKeys)
-    val translations = lookupTranslationsById(sentenceKeys)
+    val sentences = if (sentenceKeys.isEmpty()) {
+        lookupSentencesLike(query.matchText, limit, offset)
+    } else {
+        lookupSentencesById(sentenceKeys)
+    }
+
+    val translations = lookupTranslationsById(sentences.map { it.id })
+
     // convert to map to filter out duplicates
     val translationsMap = translations.map { Pair(it.japaneseId, it) }
         .toMap()
