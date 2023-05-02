@@ -14,7 +14,7 @@ sealed class TatoebaQuery {
             if (sanitizedText.contains(Regex("[a-zA-Z]")))
                 return English(sanitizedText)
 
-            return Japanese("%$sanitizedText%")
+            return Japanese(sanitizedText)
         }
     }
 }
