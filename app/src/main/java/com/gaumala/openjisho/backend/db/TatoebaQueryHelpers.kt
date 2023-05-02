@@ -12,7 +12,7 @@ fun DictQueryDao.lookupSentencesWithJapaneseQuery(query: TatoebaQuery.Japanese,
         lookupSentenceIdsMatchingIndices(query.matchText, limit, offset)
 
     val sentences = if (sentenceKeys.isEmpty()) {
-        lookupSentencesLike(query.matchText, limit, offset)
+        lookupSentencesLike("%${query.matchText}%", limit, offset)
     } else {
         lookupSentencesById(sentenceKeys)
     }
