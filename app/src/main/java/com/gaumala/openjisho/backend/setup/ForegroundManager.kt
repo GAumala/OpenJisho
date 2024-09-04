@@ -46,7 +46,7 @@ class ForegroundManager(private val service: Service) {
                         service,
                         0,
                         notificationIntent,
-                        0)
+                        PendingIntent.FLAG_IMMUTABLE)
                 }
         val largeIconBitmap = BitmapFactory.decodeResource(
             service.resources, R.drawable.notification_large_icon)
