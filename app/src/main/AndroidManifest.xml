@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.gaumala.openjisho">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <!-- allow backup is false because my database schemas are still very
     alpha and android Marshmallow doesn't delete the database because it
     backs it up by default. I should probably just destroy everything on
@@ -16,7 +16,8 @@
             android:theme="@style/Theme.MyApp">
         <activity android:name="com.gaumala.openjisho.MainActivity"
             android:windowSoftInputMode="stateAlwaysHidden"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

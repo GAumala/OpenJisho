@@ -3,7 +3,7 @@ package com.gaumala.openjisho.frontend.dict
 import android.os.Parcelable
 import com.gaumala.openjisho.common.JMdictEntry
 import com.gaumala.openjisho.common.KanjidicEntry
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 sealed class EntryResult: Parcelable {
 

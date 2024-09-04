@@ -1,14 +1,14 @@
- apply plugin: 'com.android.application'
+apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-parcelize'
 
 android {
-    compileSdkVersion 31
+    compileSdk 32
     defaultConfig {
         applicationId "com.gaumala.openjisho"
         minSdkVersion 23
-        targetSdkVersion 31
+        targetSdkVersion 32
         versionCode 4
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -20,6 +20,7 @@ android {
         }
     }
     buildFeatures {
+        buildConfig true
         viewBinding true
     }
     compileOptions {
@@ -29,12 +30,7 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
-}
-
-androidExtensions {
-    // We need this flag to enable the @Parcelize annotation and have the
-    // kotlin compiler generate Parcelable implementations for us.
-    experimental = true
+    namespace 'com.gaumala.openjisho'
 }
 
 dependencies {
@@ -64,14 +60,14 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version-alpha01"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
-    annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
     // Room for database
     // There seems to be a bug with 2.1.0-alpha03, so let's use previous
     // version for now.
     def room_version = "2.1.0-alpha02"
     implementation "androidx.room:room-runtime:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'io.mockk:mockk:1.12.0'
@@ -87,12 +83,6 @@ dependencies {
     // test coroutines
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.2"
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-debug:1.4.2'
-
-    androidTestImplementation 'io.mockk:mockk-android:1.8.12'
-    androidTestImplementation 'org.amshove.kluent:kluent-android:1.42'
-    androidTestImplementation "androidx.test.ext:junit:1.1.0"
-    androidTestImplementation 'androidx.test:runner:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 
     implementation 'commons-net:commons-net:3.6'
     implementation 'org.apache.commons:commons-compress:1.18'

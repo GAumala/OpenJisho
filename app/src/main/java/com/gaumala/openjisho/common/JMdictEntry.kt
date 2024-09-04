@@ -3,7 +3,7 @@ package com.gaumala.openjisho.common
 import android.content.Context
 import android.os.Parcelable
 import com.gaumala.openjisho.R
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import java.lang.NumberFormatException
 
 

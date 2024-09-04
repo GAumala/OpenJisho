@@ -1,10 +1,8 @@
 package com.gaumala.openjisho.frontend.dict
 
 import android.os.Parcelable
-import androidx.fragment.app.Fragment
-import com.gaumala.openjisho.common.Sentence
 import com.gaumala.openjisho.utils.recycler.PaginationStatus
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class DictSavedState(val queryText: String,
