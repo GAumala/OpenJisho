@@ -38,7 +38,7 @@ class EntryViewModel: DispatcherViewModel<EntryState, EntrySideEffect>() {
             return null
         }
 
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
             val ctx = f.activity as Context
 
             val viewModel = EntryViewModel()

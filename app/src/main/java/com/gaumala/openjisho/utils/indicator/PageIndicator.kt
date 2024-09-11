@@ -51,7 +51,7 @@ class PageIndicator: View {
         highlightedDiameter = dpToPx(8)
         fullDiameter = dpToPx(8)
 
-        val color = ctx.getColorFromTheme(R.attr.colorPrimary)
+        val color = ctx.getColorFromTheme(com.google.android.material.R.attr.colorPrimary)
 
         highlightedPaint = Paint()
         highlightedPaint.color = color

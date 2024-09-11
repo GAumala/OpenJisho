@@ -319,18 +319,18 @@ class FABSpeedDial: CoordinatorLayout {
         val animators = itemAnimators.plus(createChildrenAnimators(isOpening))
 
         animatorSet.addListener(object: Animator.AnimatorListener {
-            override fun onAnimationRepeat(animation: Animator?) {
+            override fun onAnimationRepeat(animation: Animator) {
             }
 
-            override fun onAnimationEnd(animation: Animator?) {
+            override fun onAnimationEnd(animation: Animator) {
                 state = if (isOpening) State.open else State.closed
                 onTransitionEnd()
             }
 
-            override fun onAnimationCancel(animation: Animator?) {
+            override fun onAnimationCancel(animation: Animator) {
             }
 
-            override fun onAnimationStart(animation: Animator?) {
+            override fun onAnimationStart(animation: Animator) {
                 state = State.locked
             }
 

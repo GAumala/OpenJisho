@@ -50,10 +50,10 @@ open class SwipeableViewHolder<T: ViewBinding>(b: T,
 
     companion object {
         fun createCardBackground(ctx: Context): Drawable {
-            val deleteRed = ctx.getColorFromTheme(R.attr.colorError)
+            val deleteRed = ctx.getColorFromTheme(com.google.android.material.R.attr.colorError)
             val shapeAppearance = ShapeAppearanceModel.builder(
                 ctx,
-                ctx.getResIdFromTheme(R.attr.shapeAppearanceMediumComponent),
+                ctx.getResIdFromTheme(com.google.android.material.R.attr.shapeAppearanceMediumComponent),
                 0).build()
             val bgShape = MaterialShapeDrawable(shapeAppearance)
             bgShape.fillColor = ColorStateList.valueOf(deleteRed)

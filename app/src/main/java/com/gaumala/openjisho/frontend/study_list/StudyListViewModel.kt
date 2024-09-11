@@ -14,7 +14,7 @@ class StudyListViewModel
     : DispatcherViewModel<StudyListState, StudyListSideEffect>() {
     class Factory(private val f: Fragment): ViewModelProvider.Factory {
 
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
             val viewModel = StudyListViewModel()
 
             val ctx = f.requireContext()

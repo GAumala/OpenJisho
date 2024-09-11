@@ -38,7 +38,7 @@ class MyListsViewModel: DispatcherViewModel<MyListsState, MyListsSideEffect>() {
             return newDispatcher
         }
 
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
             val viewModel = MyListsViewModel()
             val newDispatcher = createDispatcher(viewModel.viewModelScope)
             viewModel.setDispatcher(newDispatcher)

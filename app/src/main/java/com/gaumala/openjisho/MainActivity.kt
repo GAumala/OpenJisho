@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.gaumala.openjisho.R.*
 import com.gaumala.openjisho.backend.keyvalue.KeyValueStorage
 import com.gaumala.openjisho.backend.keyvalue.SharedPrefsStorage
 import com.gaumala.openjisho.backend.setup.SetupService
@@ -30,7 +31,7 @@ class MainActivity : AppCompatActivity(),
     private lateinit var navDrawer: NavigationDrawer
 
     private val fragmentAlreadySet
-        get() = supportFragmentManager.findFragmentById(R.id.container) != null
+        get() = supportFragmentManager.findFragmentById(id.container) != null
 
     private val isDBReady
         get() = kvStorage.getBoolean(KeyValueStorage.Key.dbSetup, false)
@@ -40,7 +41,7 @@ class MainActivity : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.main_activity)
+        setContentView(layout.main_activity)
         navDrawer = NavigationDrawer(this)
 
         when {
@@ -63,12 +64,14 @@ class MainActivity : AppCompatActivity(),
                 forwardResultToStudyListFragment(data)
             SecondaryScreen.showEntry,
             SecondaryScreen.showAppInfo,
-            SecondaryScreen.showText -> TODO()
+            SecondaryScreen.showText,
+            SecondaryScreen.showSentence,
+            SecondaryScreen.showHelp -> TODO()
         }
     }
 
     private fun forwardResultToStudyListFragment(data: Intent) {
-        val f = supportFragmentManager.findFragmentById(R.id.container)
+        val f = supportFragmentManager.findFragmentById(id.container)
                 as? StudyListFragment ?: return
 
         f.processResult(data)
@@ -86,19 +89,19 @@ class MainActivity : AppCompatActivity(),
 
     private fun createActivityAsUsual() {
         supportFragmentManager.beginTransaction()
-        .replace(R.id.container, DictFragment.newInstance())
+        .replace(id.container, DictFragment.newInstance())
         .commitNow()
     }
 
     private fun createActivityWithSetup() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.container, SetupFragment.newInstance())
+            .replace(id.container, SetupFragment.newInstance())
             .commitNow()
     }
 
     private fun createActivityWithWelcome() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.container, WelcomeFragment.newInstance())
+            .replace(id.container, WelcomeFragment.newInstance())
             .commitNow()
     }
 

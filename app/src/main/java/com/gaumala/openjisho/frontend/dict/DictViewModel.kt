@@ -36,7 +36,8 @@ class DictViewModel : DispatcherViewModel<DictState, DictSideEffect>() {
             runner.runSideEffect(sink, sideEffect)
         }
 
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
             val ctx = f.activity as Context
             val viewModel = DictViewModel()
 

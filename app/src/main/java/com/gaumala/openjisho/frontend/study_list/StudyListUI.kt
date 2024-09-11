@@ -61,6 +61,7 @@ class StudyListUI(owner: LifecycleOwner,
                 navigator.goToSentence(card.japanese, card.english)
             is StudyCard.Text ->
                 navigator.goToTextDetail(card.text)
+            is StudyCard.NotFound -> TODO()
         }
     }
 

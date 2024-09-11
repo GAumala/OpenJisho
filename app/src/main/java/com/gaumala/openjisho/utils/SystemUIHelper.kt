@@ -28,7 +28,7 @@ class SystemUIHelper(private val activity: Activity) {
         }
 
         activity.window.statusBarColor =
-            activity.getColorFromTheme(R.attr.colorSurface)
+            activity.getColorFromTheme(com.google.android.material.R.attr.colorSurface)
     }
     /**
      * Makes the status bar use primary color and navigation bar
@@ -43,6 +43,6 @@ class SystemUIHelper(private val activity: Activity) {
         }
 
         activity.window.statusBarColor =
-            activity.getColorFromTheme(R.attr.colorPrimary)
+            activity.getColorFromTheme(com.google.android.material.R.attr.colorPrimary)
     }
 }

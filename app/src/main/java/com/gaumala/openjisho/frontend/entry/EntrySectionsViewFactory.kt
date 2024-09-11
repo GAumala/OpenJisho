@@ -37,8 +37,8 @@ object EntrySectionsViewFactory {
     private fun addTextView(layout: ViewGroup, text: String, isLarge: Boolean) {
         val ctx = layout.context
         val textView = TextView(ctx)
-        val style = if (isLarge) R.style.TextAppearance_AppCompat_Large
-        else R.style.TextAppearance_AppCompat_Medium
+        val style = if (isLarge) com.google.android.material.R.style.TextAppearance_AppCompat_Large
+        else com.google.android.material.R.style.TextAppearance_AppCompat_Medium
         textView.setTextAppearanceCompat(ctx, style)
         textView.text = text
         textView.setTextIsSelectable(true)
@@ -112,7 +112,7 @@ object EntrySectionsViewFactory {
         val tagView = TextView(ctx)
         tagView.setTextAppearanceCompat(
             ctx,
-            ctx.getResIdFromTheme(R.attr.textAppearanceOverline))
+            ctx.getResIdFromTheme(com.google.android.material.R.attr.textAppearanceOverline))
         tagView.text = tag.getText(ctx)
 
         val layoutParams = LinearLayout.LayoutParams(

@@ -23,7 +23,7 @@ class RadicalsViewModel: DispatcherViewModel<RadicalsState, RadicalsSideEffect>(
             )
         }
 
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
             val ctx = f.activity as Context
 
             val viewModel = RadicalsViewModel()

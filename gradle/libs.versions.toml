@@ -1,0 +1,57 @@
+[versions]
+agp = "8.6.0"
+appcompat = "1.0.2"
+commonsCompress = "1.18"
+commonsNet = "3.6"
+constraintlayout = "2.0.0-beta4"
+coreTesting = "2.1.0"
+fragment = "1.2.0"
+json = "20180813"
+kluent = "1.72"
+kotlin = "1.9.0"
+junit = "4.13.2"
+junitVersion = "1.1.5"
+coroutines = "1.4.2"
+lifecycle = "2.2.0"
+material = "1.1.0"
+mockk = "1.12.0"
+mvi = "184077c"
+recyclerview = "1.1.0"
+robolectric = "4.4"
+room = "2.6.1"
+ksp = "1.9.0-1.0.13"
+groupie = "2.9.0"
+
+[libraries]
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
+androidx-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "coreTesting" }
+androidx-fragment = { module = "androidx.fragment:fragment", version.ref = "fragment" }
+androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
+commons-compress = { module = "org.apache.commons:commons-compress", version.ref = "commonsCompress" }
+commons-net = { module = "commons-net:commons-net", version.ref = "commonsNet" }
+json = { module = "org.json:json", version.ref = "json" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+kluent = { module = "org.amshove.kluent:kluent", version.ref = "kluent" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-coroutines-debug = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-debug", version.ref = "coroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+kotlin-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+material = { module = "com.google.android.material:material", version.ref = "material" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+mvi-android = { module = "com.github.GAumala:mvi-android", version.ref = "mvi" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref= "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref= "room" }
+groupie = { group = "com.github.lisawray.groupie", name = "groupie", version.ref= "groupie" }
+groupie-viewbinding = { group = "com.github.lisawray.groupie", name = "groupie-viewbinding", version.ref= "groupie" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+google-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

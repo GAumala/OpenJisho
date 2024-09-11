@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.gaumala.openjisho.R.*
 import com.gaumala.openjisho.frontend.navigation.SecondaryScreen
 import com.gaumala.openjisho.frontend.dict.DictFragment
 import com.gaumala.openjisho.frontend.entry.EntryFragment
@@ -22,7 +23,7 @@ import com.gaumala.openjisho.frontend.tour.TourFragment
 class SecondaryActivity: AppCompatActivity(), OnTextSubmittedListener {
 
     private val fragmentAlreadySet
-        get() = supportFragmentManager.findFragmentById(R.id.container) != null
+        get() = supportFragmentManager.findFragmentById(id.container) != null
 
     override fun onTextSubmitted(text: String) {
         val intent = Intent()
@@ -37,7 +38,7 @@ class SecondaryActivity: AppCompatActivity(), OnTextSubmittedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.secondary_activity)
+        setContentView(layout.secondary_activity)
 
         if (fragmentAlreadySet)
             return
@@ -65,7 +66,7 @@ class SecondaryActivity: AppCompatActivity(), OnTextSubmittedListener {
         fragment.arguments = extraArgs
 
         supportFragmentManager.beginTransaction()
-        .replace(R.id.container, fragment)
+        .replace(id.container, fragment)
         .commit()
     }
 

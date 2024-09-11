@@ -21,7 +21,7 @@ class SentenceViewModel: DispatcherViewModel<SentenceState, SentenceSideEffect>(
             return SentenceState(sentence)
         }
 
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
             val ctx = f.activity as Context
             val appDB = DictDatabase.getInstance(ctx)
             val initialState = createInitialState()
