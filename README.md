@@ -14,8 +14,7 @@ downloaded during first time setup.
 
 ## Development
 
-Use a recent version of Android Studio. I'm currently using Arctic Fox, but
-any 4.0+ version may work.
+Use a recent version of Android Studio. I'm currently using Koala Feature Drop.
 
 Before building the app you need to get some dictionary files that are not 
 included in this repository. Just run `make` at the project root and the 
