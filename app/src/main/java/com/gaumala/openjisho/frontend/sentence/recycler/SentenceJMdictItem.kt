@@ -8,14 +8,21 @@ import com.gaumala.openjisho.frontend.dict.recycler.JMdictItem
 import com.xwray.groupie.viewbinding.BindableItem
 
 class SentenceJMdictItem(
+    val usedForm: String?,
     val summarized: JMdictEntry.Summarized,
     val position: Int,
     val onClicked: (JMdictEntry.Summarized) -> Unit
 ): BindableItem<JmdictItemBinding>(position.toLong()) {
 
     override fun bind(viewBinding: JmdictItemBinding, position: Int) {
-        JMdictItem(summarized).bind(viewBinding, position)
+        // For sentence word lists, we should display the form that's
+        // used in sentence as the entry header instead of the header
+        // in dictionary entry
+        val displaySummary = summarized.copy(header = usedForm ?: summarized.header)
+        JMdictItem(displaySummary).bind(viewBinding, position)
 
+        // but if the user clicks on this item, the JMdict entry screen
+        // should show the real header
         viewBinding.root.setOnClickListener {
             onClicked(summarized)
         }

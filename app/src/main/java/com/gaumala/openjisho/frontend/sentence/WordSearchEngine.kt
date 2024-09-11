@@ -26,16 +26,16 @@ class WordSearchEngine(private val dao: DictQueryDao) {
         val matchingEntry = rows
             .map { JMdictConverter.fromEntryRow(it) }
             .find(matchesTargetWord)
-            ?: return createSentenceWordFromJMdictRow(rows.first())
+            ?: return createSentenceWordFromJMdictRow(usedForm, rows.first())
 
         val summarized = JMdictEntry.Summarized.fromEntry(matchingEntry)
-        return SentenceWord.JMdict(summarized)
+        return SentenceWord.JMdict(usedForm, summarized)
     }
 
-    private fun createSentenceWordFromJMdictRow(row: JMdictRow): SentenceWord {
+    private fun createSentenceWordFromJMdictRow(usedForm: String?, row: JMdictRow): SentenceWord {
         val entry = JMdictConverter.fromEntryRow(row)
         val summarized = JMdictEntry.Summarized.fromEntry(entry)
-        return SentenceWord.JMdict(summarized)
+        return SentenceWord.JMdict(usedForm, summarized)
     }
 
     private fun createUnknownSentenceWord(it: WordIndex): SentenceWord {
@@ -48,7 +48,7 @@ class WordSearchEngine(private val dao: DictQueryDao) {
             if (rows.size > 1)
                 findMatchingEntryForIndex(rows, it)
             else if (rows.size == 1)
-                createSentenceWordFromJMdictRow(rows.first())
+                createSentenceWordFromJMdictRow(it.usedForm, rows.first())
             else
                 createUnknownSentenceWord(it)
         }

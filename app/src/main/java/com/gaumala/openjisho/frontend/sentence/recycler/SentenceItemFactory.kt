@@ -20,7 +20,7 @@ class SentenceItemFactory(
         result.addAll(words.mapIndexed { i, word ->
             when (word) {
                 is SentenceWord.JMdict ->
-                    SentenceJMdictItem(word.entry, i, onJMdictEntryClicked)
+                    SentenceJMdictItem(word.usedForm, word.entry, i, onJMdictEntryClicked)
                 is SentenceWord.Unknown -> UnknownWordItem(word.text, i)
             }
         })
