@@ -2,7 +2,7 @@ package com.gaumala.openjisho.backend.setup.radkfile
 
 import com.gaumala.openjisho.backend.setup.file.DictFileSamples
 import com.gaumala.openjisho.common.RadicalSection
-import org.amshove.kluent.`should equal`
+import org.amshove.kluent.`should be equal to`
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -56,6 +56,6 @@ class RadkfileParserTest {
                     "痂", "癆", "窈", "笳", "耡", "舅", "莇", "跏", "踴", "釛", "勒", "黝"))
             )
         )
-        entries `should equal` expectedEntries
+        entries `should be equal to` expectedEntries
     }
 }

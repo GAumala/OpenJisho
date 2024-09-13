@@ -2,7 +2,6 @@ package com.gaumala.openjisho.backend.setup.tatoeba
 
 import com.gaumala.openjisho.common.WordIndex
 import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.`should equal`
 import org.junit.Test
 
 class TatoebaIndicesParserTest {
@@ -13,7 +12,7 @@ class TatoebaIndicesParserTest {
         val exampleIndices = "其の[01]{その} 家(いえ)[01] は 可也{かなり} ぼろ屋[01]~ になる[01]{になっている}"
         val parsed = TatoebaIndicesParser.parseIndices(exampleIndices)
 
-        parsed `should equal` listOf(
+        parsed `should be equal to` listOf(
             WordIndex(
                 headword = "其の",
                 reading = null,

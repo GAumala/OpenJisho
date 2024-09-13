@@ -44,7 +44,6 @@ class SetupWorkerTest {
 
     // The default delays try to be proportionate to the file
     // transfer length in production
-    @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun runSetupWorker(
         scope: CoroutineScope,
         checkpointManager: MockedCheckpointManager = MockedCheckpointManager(),
@@ -125,7 +124,7 @@ class SetupWorkerTest {
             result `should be instance of` Either.Right::class.java
 
             // should have marked at some point all of these checkpoints
-            checkpointManager.marks `should equal` listOf(
+            checkpointManager.marks `should be equal to` listOf(
                 Pair(Checkpoint.radkfileReady, true),
                 Pair(Checkpoint.kanjidicReady, true),
                 Pair(Checkpoint.jmdictReady, true),
@@ -135,7 +134,7 @@ class SetupWorkerTest {
             )
 
             // should have zero active checkpoints
-            Checkpoint.values().forEach {
+            Checkpoint.entries.forEach {
                 checkpointManager.reachedCheckpoint(it) `should be` false
             }
         }

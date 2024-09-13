@@ -14,7 +14,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should be`
-import org.amshove.kluent.`should equal`
+import org.amshove.kluent.`should be equal to`
 import org.junit.Test
 
 class EntrySearchEngineTest {
@@ -39,7 +39,7 @@ class EntrySearchEngineTest {
         val engine = EntrySearchEngine(dictQueryDao, PAGE_SIZE)
         val results = engine.search("入", 0)
 
-        results `should equal` listOf(
+        results `should be equal to` listOf(
             EntryResult.JMdict(sampleJmdictSummary1),
             EntryResult.Kanjidic(sampleKanjidicEntry1)
         )
@@ -71,7 +71,7 @@ class EntrySearchEngineTest {
         // assert that the jmdict entry is first because the header
         // matches the query text and that the following kanji are
         // in the same order in which they appear in the query text.
-        results `should equal` listOf(
+        results `should be equal to` listOf(
             EntryResult.JMdict(sampleJmdictSummary2),
             EntryResult.Kanjidic(sampleKanjidicEntry1),
             EntryResult.Kanjidic(sampleKanjidicEntry2)
@@ -95,7 +95,7 @@ class EntrySearchEngineTest {
 
         // assert that the jmdict entry for "入学" is first because
         // the only sense item (Matriculation) matches the query text
-        results `should equal` listOf(
+        results `should be equal to` listOf(
             EntryResult.JMdict(sampleJmdictSummary2),
             EntryResult.JMdict(sampleJmdictSummary1)
         )
@@ -173,10 +173,10 @@ class EntrySearchEngineTest {
         val searchResultWithHiragana = engine.search("かなう", 0)
         val searchResultWithKanji = engine.search("敵う", 0)
 
-        searchResultWithHiragana `should equal` listOf(
+        searchResultWithHiragana `should be equal to` listOf(
             EntryResult.JMdict(sampleJmdictSummary3)
         )
-        searchResultWithKanji `should equal` listOf(
+        searchResultWithKanji `should be equal to` listOf(
             EntryResult.JMdict(
                 // different query text, different header
                 sampleJmdictSummary3.copy(header = "敵う")
@@ -238,7 +238,7 @@ class EntrySearchEngineTest {
         val engine = EntrySearchEngine(dictQueryDao, PAGE_SIZE)
         val suggestions =
             engine.getSuggestionsForLastEntryResults("入", lastResults)
-        suggestions `should equal` listOf(
+        suggestions `should be equal to` listOf(
             QuerySuggestion(
                 "入_",
                 listOf(EntryResult.JMdict(sampleJmdictSummary2))

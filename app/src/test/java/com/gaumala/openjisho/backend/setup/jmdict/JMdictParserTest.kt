@@ -3,7 +3,7 @@ package com.gaumala.openjisho.backend.setup.jmdict
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.gaumala.openjisho.backend.setup.file.DictFileSamples
 import com.gaumala.openjisho.common.JMdictEntry
-import org.amshove.kluent.`should equal`
+import org.amshove.kluent.`should be equal to`
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -89,6 +89,6 @@ class JMdictParserTest {
                 )
             )
         )
-        entries `should equal` expectedEntries
+        entries `should be equal to` expectedEntries
     }
 }
