@@ -1,6 +1,7 @@
 package com.gaumala.openjisho.backend.setup
 
 import android.app.*
+import android.app.Service.STOP_FOREGROUND_DETACH
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -89,7 +90,7 @@ class ForegroundManager(private val service: Service) {
 
     fun stop() {
         if (hasPermissions)
-            service.stopForeground(true)
+            service.stopForeground(STOP_FOREGROUND_DETACH)
     }
 
 }

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Binder
 import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 import com.gaumala.openjisho.R
 import com.gaumala.openjisho.common.UIText
@@ -29,7 +30,7 @@ class SetupService : Service() {
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(
         serviceJob + Dispatchers.Main)
-    private val handler = Handler()
+    private val handler = Handler(Looper.getMainLooper())
     private val binder by lazy { SetupBinder() }
     private val foregroundManager by lazy {
         ForegroundManager(

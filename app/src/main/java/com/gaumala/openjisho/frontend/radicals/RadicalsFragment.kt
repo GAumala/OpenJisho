@@ -12,6 +12,7 @@ import com.gaumala.openjisho.R
 import com.gaumala.openjisho.frontend.dict.DictFragment
 import com.gaumala.openjisho.frontend.dict.DictSavedState
 import com.gaumala.openjisho.frontend.navigation.runRadicalsToDictTransition
+import com.gaumala.openjisho.utils.parcelable
 
 /**
  * A fragment used for looking up kanji by radicals.
@@ -82,7 +83,7 @@ class RadicalsFragment : Fragment() {
         if (savedText != null) return savedText
 
         return requireArguments()
-            .getParcelable<DictSavedState>(DICT_SAVED_STATE_KEY)
+            .parcelable<DictSavedState>(DICT_SAVED_STATE_KEY)
             ?.queryText ?: ""
     }
 
@@ -90,7 +91,7 @@ class RadicalsFragment : Fragment() {
         val args = requireArguments()
         val isPicker = args.getBoolean(IS_PICKER_KEY)
         val savedState =
-            args.getParcelable<DictSavedState?>(DICT_SAVED_STATE_KEY)
+            args.parcelable<DictSavedState>(DICT_SAVED_STATE_KEY)
         val updatedState = DictSavedState.updateQuery(savedState, queryText)
 
         val nextFragment = DictFragment.newInstance(

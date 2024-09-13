@@ -11,6 +11,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProviders
 import com.gaumala.openjisho.common.KanjidicEntry
 import com.gaumala.openjisho.utils.ClipboardUtil
+import com.gaumala.openjisho.utils.parcelable
 
 /**
  * A fragment that displays a dictionary entry's details. It supports JMdict
@@ -96,7 +97,7 @@ class EntryFragment: Fragment() {
     private fun setupBannerArt(view: View) {
         val banner = view.findViewById<ImageView>(R.id.app_bar_art)
         val isKanjiOnly = requireArguments()
-            .getParcelable<KanjidicEntry>(KANJIDIC_ENTRY_KEY) != null
+            .parcelable<KanjidicEntry>(KANJIDIC_ENTRY_KEY) != null
         if (isKanjiOnly) {
             banner.scaleType = ImageView.ScaleType.FIT_CENTER
             banner.setImageResource(R.drawable.sentence_banner_art)

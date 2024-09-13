@@ -92,7 +92,7 @@ class SetupWorkerTest {
                 loadTime = 8000L,
                 contents = DictFileSamples.tatoebaTranslations,
                 setupStep = SetupStep.downloadingTatoebaTranslations
-        )
+            )
     ): Either<Exception, Unit> {
         val setupWorker = SetupWorker(
             reportProgressToService = reportProgress,
@@ -168,9 +168,9 @@ class SetupWorkerTest {
 
             insertions.size `should be equal to` 90
             insertions `should contain all` listOf(
-                RadicalRow(rowid=0, radical="力", kanji="甥"),
-                RadicalRow(rowid=0, radical="力", kanji="勉"),
-                RadicalRow(rowid=0, radical="力", kanji="黝")
+                RadicalRow(rowid = 0, radical = "力", kanji = "甥"),
+                RadicalRow(rowid = 0, radical = "力", kanji = "勉"),
+                RadicalRow(rowid = 0, radical = "力", kanji = "黝")
             )
         }
     }
@@ -200,13 +200,14 @@ class SetupWorkerTest {
             // should succeed
             result `should be instance of` Either.Right::class.java
 
-            insertions `should equal` listOf(
+            insertions `should be equal to` listOf(
                 KanjidicRow(
                     literal = "握",
                     strokes = 12,
-                    entryJson = "{\"kunReadings\":[\"にぎ.る\"],\"grade\":8," +
-                            "\"jlpt\":1,\"onReadings\":[\"アク\"],\"meanings\"" +
-                            ":[\"grip\",\"hold\",\"mould sushi\",\"bribe\"]}")
+                    entryJson = """{"grade":8,"jlpt":1,"meanings":
+                        |["grip","hold","mould sushi","bribe"],"onReadings":["アク"],
+                        |"kunReadings":["にぎ.る"]}""".trimMargin().replace("\n", "")
+                )
             )
         }
     }
@@ -236,7 +237,7 @@ class SetupWorkerTest {
             // should succeed
             result `should be instance of` Either.Right::class.java
 
-            insertions `should equal` listOf(
+            insertions `should be equal to` listOf(
                 JMdictRow(
                     id = 1499320,
                     entryJson = "{\"kanji\":[{\"text\":\"部屋\",\"tags\":" +
@@ -274,7 +275,7 @@ class SetupWorkerTest {
             // should succeed
             result `should be instance of` Either.Right::class.java
 
-            insertions `should equal` listOf(
+            insertions `should be equal to` listOf(
                 JpnSentenceRow(
                     id = 1001,
                     japanese = "こんにちは"
@@ -312,7 +313,7 @@ class SetupWorkerTest {
             // should succeed
             result `should be instance of` Either.Right::class.java
 
-            insertions `should equal` listOf(
+            insertions `should be equal to` listOf(
                 JpnIndicesRow(
                     rowid = 0,
                     japaneseId = 1001,
@@ -352,7 +353,7 @@ class SetupWorkerTest {
             // should succeed
             result `should be instance of` Either.Right::class.java
 
-            insertions `should equal` listOf(
+            insertions `should be equal to` listOf(
                 EngTranslationRow(
                     rowid = 0,
                     japaneseId = 1001,

@@ -5,7 +5,7 @@ import com.gaumala.openjisho.backend.db.JMdictRow
 import com.gaumala.openjisho.common.JMdictEntry
 import io.mockk.every
 import io.mockk.mockk
-import org.amshove.kluent.`should equal`
+import org.amshove.kluent.`should be equal to`
 import org.junit.Test
 
 class WordSearchEngineTest {
@@ -75,6 +75,7 @@ class WordSearchEngineTest {
         val expectedWords = listOf(
             SentenceWord.Unknown("田中"),
             SentenceWord.JMdict(
+                usedForm = null,
                 JMdictEntry.Summarized(
                     header = "の",
                     furigana = null,
@@ -99,6 +100,7 @@ class WordSearchEngineTest {
                     )
                 )
             ), SentenceWord.JMdict(
+                usedForm = null,
                 JMdictEntry.Summarized(
                     header = "家",
                     furigana = "いえ",
@@ -128,6 +130,7 @@ class WordSearchEngineTest {
                     )
                 )
             ), SentenceWord.JMdict(
+                usedForm = null,
                 JMdictEntry.Summarized(
                     header = "に",
                     furigana = null,
@@ -152,6 +155,7 @@ class WordSearchEngineTest {
                     )
                 )
             ) , SentenceWord.JMdict(
+                usedForm = "いる",
                 JMdictEntry.Summarized(
                     header = "居る",
                     furigana = "いる",
@@ -187,6 +191,6 @@ class WordSearchEngineTest {
         val searchEngine = WordSearchEngine(dao)
 
         val words = searchEngine.findSentenceWords(indices)
-        words `should equal` expectedWords
+        words `should be equal to` expectedWords
     }
 }

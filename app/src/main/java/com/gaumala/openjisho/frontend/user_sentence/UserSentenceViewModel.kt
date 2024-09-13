@@ -24,6 +24,7 @@ class UserSentenceViewModel : DispatcherViewModel<UserSentenceState, UserSentenc
             return UserSentenceState(initialText)
         }
 
+        @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             val ctx = f.activity as Context
             val appDB = DictDatabase.getInstance(ctx)

@@ -17,6 +17,7 @@ import com.gaumala.openjisho.frontend.dict.DictSavedState
 import com.gaumala.openjisho.frontend.navigation.NavDrawerContainer
 import com.gaumala.openjisho.frontend.navigation.runSlideTransition
 import com.gaumala.openjisho.frontend.study_list.*
+import com.gaumala.openjisho.utils.parcelable
 import com.gaumala.openjisho.utils.ui.AbstractSnackbar
 import com.gaumala.openjisho.utils.ui.ContextualToolbarMenu
 
@@ -36,7 +37,7 @@ class MyListsFragment : Fragment() {
     private val navigator = object: MyListsNavigator {
         override fun goToList(listName: String) {
             val savedState = requireArguments()
-                .getParcelable<DictSavedState>(DICT_SAVED_STATE_KEY)!!
+                .parcelable<DictSavedState>(DICT_SAVED_STATE_KEY)!!
 
             parentFragmentManager.runSlideTransition(
                 StudyListFragment.newInstance(
@@ -48,7 +49,7 @@ class MyListsFragment : Fragment() {
 
         override fun goToNewListForm() {
             val savedState = requireArguments()
-                .getParcelable<DictSavedState>(DICT_SAVED_STATE_KEY)!!
+                .parcelable<DictSavedState>(DICT_SAVED_STATE_KEY)!!
             val nextFragment =
                 NewListFragment.newInstance(savedState)
             parentFragmentManager.runSlideTransition(nextFragment)
@@ -59,7 +60,7 @@ class MyListsFragment : Fragment() {
     private val onBackPressedCallback = object: OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             val savedState = requireArguments()
-                .getParcelable<DictSavedState>(DICT_SAVED_STATE_KEY)
+                .parcelable<DictSavedState>(DICT_SAVED_STATE_KEY)
             val screen = MainScreen.Dictionary(
                 reverse = true, savedState = savedState)
 
