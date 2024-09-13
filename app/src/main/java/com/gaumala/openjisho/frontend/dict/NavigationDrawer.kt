@@ -1,6 +1,7 @@
 package com.gaumala.openjisho.frontend.dict
 
 import android.os.Handler
+import android.os.Looper
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -10,11 +11,12 @@ import androidx.fragment.app.Fragment
 import com.gaumala.openjisho.R
 import com.gaumala.openjisho.frontend.navigation.MainScreen
 import com.gaumala.openjisho.frontend.navigation.Navigator
+import com.gaumala.openjisho.frontend.user_sentence.InputSentenceWidget
 import com.gaumala.openjisho.utils.hideKeyboard
 import com.google.android.material.navigation.NavigationView
 
 class NavigationDrawer(private val activity: AppCompatActivity) {
-    private val handler = Handler()
+    private val handler = Handler(Looper.getMainLooper())
     private val navigator = activity as Navigator
     private val drawer = activity.findViewById<DrawerLayout>(R.id.drawer_layout)
     private val navigationView = activity.findViewById<NavigationView>(R.id.nav_view)
@@ -69,6 +71,8 @@ class NavigationDrawer(private val activity: AppCompatActivity) {
         when (selectedMenuItemId) {
             R.id.new_search ->
                 showDictFragment()
+            R.id.input_sentence ->
+                showInputSentenceDialog()
             R.id.rebuild ->
                 showRebuildDatabaseDialog()
             R.id.about ->
@@ -97,6 +101,13 @@ class NavigationDrawer(private val activity: AppCompatActivity) {
     private fun showRebuildDatabaseDialog() {
         handler.post {
             RebuildDialog.Manager(activity.supportFragmentManager)
+                .prompt()
+        }
+    }
+
+    private fun showInputSentenceDialog() {
+        handler.post {
+            InputSentenceWidget(activity.supportFragmentManager)
                 .prompt()
         }
     }

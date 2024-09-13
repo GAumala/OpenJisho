@@ -15,6 +15,8 @@ import com.gaumala.openjisho.frontend.study_list.StudyListFragment
 import com.gaumala.openjisho.frontend.pages.WelcomeFragment
 import com.gaumala.openjisho.frontend.setup.SetupFragment
 import com.gaumala.openjisho.frontend.my_lists.MyListsFragment
+import com.gaumala.openjisho.frontend.user_sentence.InputSentenceDialogParent
+import com.gaumala.openjisho.frontend.user_sentence.UserSentenceFragment
 import com.gaumala.openjisho.frontend.tour.TourFragment
 
 /**
@@ -23,7 +25,7 @@ import com.gaumala.openjisho.frontend.tour.TourFragment
  * it implements the [Navigator] interface with [MainScreen] as type parameter.
  */
 class MainActivity : AppCompatActivity(),
-    Navigator, NavDrawerContainer {
+    Navigator, NavDrawerContainer, InputSentenceDialogParent {
 
     private val kvStorage: KeyValueStorage by lazy {
         SharedPrefsStorage(this)
@@ -66,6 +68,7 @@ class MainActivity : AppCompatActivity(),
             SecondaryScreen.showAppInfo,
             SecondaryScreen.showText,
             SecondaryScreen.showSentence,
+            SecondaryScreen.showUserSentence,
             SecondaryScreen.showHelp -> TODO()
         }
     }
@@ -140,6 +143,12 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
+    private fun goToInputSentence(sentence: String) {
+        val extraArgs = Bundle()
+        extraArgs.putString(UserSentenceFragment.INITIAL_TEXT_KEY, sentence)
+        openSecondaryActivity(SecondaryScreen.showUserSentence, extraArgs)
+    }
+
     private fun goToMyLists(args: MainScreen.MyLists) {
         supportFragmentManager.runSlideTransition(
             newFragment = MyListsFragment.newInstance(args.savedState),
@@ -162,5 +171,9 @@ class MainActivity : AppCompatActivity(),
 
     override fun setDrawerLocked(isLocked: Boolean) {
         navDrawer.setDrawerLocked(isLocked)
+    }
+
+    override fun onInputSentence(sentence: String) {
+        goToInputSentence(sentence)
     }
 }

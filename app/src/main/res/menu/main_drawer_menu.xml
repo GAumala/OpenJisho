@@ -4,6 +4,9 @@
     <item android:id="@+id/new_search"
         android:icon="@drawable/ic_search_primary_24dp"
         android:title="@string/new_search" />
+    <item android:id="@+id/input_sentence"
+        android:icon="@drawable/baseline_edit_24"
+        android:title="@string/input_sentence" />
     <item android:id="@+id/rebuild"
         android:icon="@drawable/ic_update_black_24dp"
         android:title="@string/rebuild_db" />

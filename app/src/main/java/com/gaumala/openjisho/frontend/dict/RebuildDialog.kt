@@ -34,8 +34,6 @@ class RebuildDialog private constructor(
 
         private fun rebuildDatabase() {
             val activity = activity as Navigator
-
-
             activity.goTo(MainScreen.Setup)
         }
 

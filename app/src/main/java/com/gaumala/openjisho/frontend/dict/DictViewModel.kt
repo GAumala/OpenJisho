@@ -13,6 +13,7 @@ import com.gaumala.openjisho.backend.db.DictDatabase
 import com.gaumala.openjisho.backend.dict.DictCache
 import com.gaumala.openjisho.utils.async.CoroutineIOWorker
 import com.gaumala.openjisho.utils.async.MessageThrottler
+import com.gaumala.openjisho.utils.parcelable
 
 
 class DictViewModel : DispatcherViewModel<DictState, DictSideEffect>() {
@@ -20,8 +21,8 @@ class DictViewModel : DispatcherViewModel<DictState, DictSideEffect>() {
                   private val savedInstanceState: Bundle?): ViewModelProvider.Factory {
 
         private fun getSavedState(): DictSavedState? =
-            f.arguments!!.getParcelable(DictFragment.SAVED_STATE_KEY)
-                ?: savedInstanceState?.getParcelable(DictFragment.SAVED_STATE_KEY)
+            f.arguments!!.parcelable(DictFragment.SAVED_STATE_KEY)
+                ?: savedInstanceState?.parcelable(DictFragment.SAVED_STATE_KEY)
 
         private fun runStartupEffects(runner: DictSideEffectRunner,
                                       sink: ActionSink<DictState, DictSideEffect>,

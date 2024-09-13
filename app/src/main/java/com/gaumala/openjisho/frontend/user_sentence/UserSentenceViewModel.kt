@@ -1,6 +1,7 @@
-package com.gaumala.openjisho.frontend.sentence
+package com.gaumala.openjisho.frontend.user_sentence
 
 import android.content.Context
+import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -8,34 +9,35 @@ import androidx.lifecycle.viewModelScope
 import com.gaumala.mvi.Dispatcher
 import com.gaumala.mvi.DispatcherViewModel
 import com.gaumala.openjisho.backend.db.DictDatabase
-import com.gaumala.openjisho.common.Sentence
-import com.gaumala.openjisho.utils.parcelable
 
-class SentenceViewModel: DispatcherViewModel<SentenceState, SentenceSideEffect>() {
+class UserSentenceViewModel : DispatcherViewModel<UserSentenceState, UserSentenceSideEffect>() {
 
-    class Factory(val f: Fragment): ViewModelProvider.Factory {
-        private fun createInitialState(): SentenceState {
+    class Factory(
+        val f: Fragment,
+        private val savedInstanceState: Bundle?
+    ) : ViewModelProvider.Factory {
+        private fun createInitialState(): UserSentenceState {
             val args = f.requireArguments()
-            val sentence =
-                args.parcelable<Sentence>(SentenceFragment.SENTENCE_KEY)!!
+            val initialText = savedInstanceState?.getString(UserSentenceFragment.SAVED_TEXT_KEY)
+                ?: args.getString(UserSentenceFragment.INITIAL_TEXT_KEY)!!
 
-            return SentenceState(sentence)
+            return UserSentenceState(initialText)
         }
 
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             val ctx = f.activity as Context
             val appDB = DictDatabase.getInstance(ctx)
             val initialState = createInitialState()
-            val viewModel = SentenceViewModel()
+            val viewModel = UserSentenceViewModel()
 
-            val runner = SentenceSideEffectRunner(
+            val runner = UserSentenceSERunner(
                 viewModel.viewModelScope,
                 appDB.dictQueryDao()
             )
             val newDispatcher = Dispatcher(runner, initialState)
 
             val startupSideEffect =
-                SentenceSideEffect.LoadIndices(initialState.sentence.id)
+                UserSentenceSideEffect.LoadWords(initialState.text)
             runner.runSideEffect(newDispatcher, startupSideEffect)
 
             viewModel.setDispatcher(newDispatcher)

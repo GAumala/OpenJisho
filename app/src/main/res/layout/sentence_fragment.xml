@@ -51,4 +51,17 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/speed_dial_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:src="@drawable/baseline_edit_24"
+        android:tint="?colorSurface"
+        android:contentDescription="@string/history"
+        app:backgroundTint="?colorPrimary"
+        app:tint="?colorSurface"
+        android:visibility="gone"
+        android:layout_margin="16dp" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

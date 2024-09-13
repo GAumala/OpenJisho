@@ -42,15 +42,16 @@ class WordSearchEngine(private val dao: DictQueryDao) {
         return SentenceWord.Unknown(it.sentenceForm)
     }
 
-    fun findSentenceWords(indices: String): List<SentenceWord> {
-        return TatoebaIndicesParser.parseIndices(indices).map {
-            val rows = dao.lookupJMdictRowsExact(it.displayForm)
-            if (rows.size > 1)
-                findMatchingEntryForIndex(rows, it)
-            else if (rows.size == 1)
-                createSentenceWordFromJMdictRow(it.usedForm, rows.first())
-            else
-                createUnknownSentenceWord(it)
-        }
+    fun findSentenceWords(indices: String) =
+        findSentenceWords(TatoebaIndicesParser.parseIndices(indices))
+
+    fun findSentenceWords(indices: List<WordIndex>): List<SentenceWord> = indices.map {
+        val rows = dao.lookupJMdictRowsExact(it.displayForm)
+        if (rows.size > 1)
+            findMatchingEntryForIndex(rows, it)
+        else if (rows.size == 1)
+            createSentenceWordFromJMdictRow(it.usedForm, rows.first())
+        else
+            createUnknownSentenceWord(it)
     }
 }

@@ -1,36 +1,51 @@
-package com.gaumala.openjisho.frontend.sentence
+package com.gaumala.openjisho.frontend.user_sentence
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import com.gaumala.mvi.ActionSink
 import com.gaumala.openjisho.R
 import com.gaumala.openjisho.common.JMdictEntry
-import com.gaumala.openjisho.common.Sentence
 import com.gaumala.openjisho.frontend.entry.EntryFragment
 import com.gaumala.openjisho.frontend.navigation.runSlideTransition
+import com.gaumala.openjisho.frontend.user_sentence.actions.SetSentence
 
 /**
- * A fragment that displays a Tatoeba example sentence, its translation and
- * any JMdict entries associated with the words in the sentence.
+ * A fragment that displays a sentence input by the user along with
+ * any JMdict entries associated with the words in the sentence. The UI
+ * is meant to be the same as
+ * [com.gaumala.openjisho.frontend.sentence.SentenceFragment]
  *
- * The user usually navigates here after clicking a sentence result row in
- * [com.gaumala.openjisho.frontend.dict.DictFragment].
+ * This fragment is displayed when user clicks "Input Sentence" in the drawer menu.
  */
-class SentenceFragment: Fragment() {
+class UserSentenceFragment : Fragment(), InputSentenceDialogParent {
     companion object {
-        const val SENTENCE_KEY = "sentence"
+        const val INITIAL_TEXT_KEY = "initialText"
+        const val SAVED_TEXT_KEY = "savedText"
 
-        fun newInstance(sentence: Sentence): SentenceFragment {
+        fun newInstance(initialText: String): UserSentenceFragment {
             val bundle = Bundle()
-            bundle.putParcelable(SENTENCE_KEY, sentence)
+            bundle.putString(INITIAL_TEXT_KEY, initialText)
 
-            val fragment = SentenceFragment()
+            val fragment = UserSentenceFragment()
             fragment.arguments = bundle
             return fragment
         }
+    }
+
+    lateinit var ui: UserSentenceUI
+    lateinit var actionSink: ActionSink<UserSentenceState, UserSentenceSideEffect>
+
+    private val editSentence = { initialValue: String ->
+        InputSentenceWidget(childFragmentManager).prompt(initialValue)
     }
 
     private val showEntry = { summarized: JMdictEntry.Summarized ->
@@ -51,6 +66,7 @@ class SentenceFragment: Fragment() {
                 activity?.onBackPressed()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -65,22 +81,32 @@ class SentenceFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View {
         setHasOptionsMenu(true)
-        val viewModel = ViewModelProviders.
-        of(this, SentenceViewModel.Factory(this))
-            .get(SentenceViewModel::class.java)
+        val factory = UserSentenceViewModel.Factory(this, savedInstanceState)
+        val viewModel = ViewModelProviders.of(this, factory)
+            .get(UserSentenceViewModel::class.java)
 
         val view = inflater.inflate(
-            R.layout.sentence_fragment, container, false)
+            R.layout.sentence_fragment, container, false
+        )
         setupToolbar(view)
-        SentenceUI(
+        actionSink = viewModel.userActionSink
+        ui = UserSentenceUI(
             showEntry = showEntry,
+            editSentence = editSentence,
             owner = this.viewLifecycleOwner,
             view = view,
             liveState = viewModel.liveState
-        ).subscribe()
+        )
+        ui.subscribe()
 
         return view
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        val savedText = ui.getSavedText()
+        outState.putString(SAVED_TEXT_KEY, savedText)
+    }
+
 
     private fun setupToolbar(view: View) {
         val activity = requireActivity() as AppCompatActivity
@@ -90,5 +116,9 @@ class SentenceFragment: Fragment() {
 
         val actionBar = activity.supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    override fun onInputSentence(sentence: String) {
+        actionSink.submitAction(SetSentence(sentence))
     }
 }

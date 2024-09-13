@@ -9,10 +9,12 @@ import java.lang.IllegalArgumentException
 class SentenceItemFactory(
     private val onJMdictEntryClicked: (JMdictEntry.Summarized) -> Unit
 ) {
-    fun createItems(sentence: Sentence,
+    fun createItems(sentence: Sentence?,
                     words: List<SentenceWord>): List<BindableItem<*>> {
         val result = ArrayList<BindableItem<*>>()
-        result.add(TranslationItem(sentence))
+        if (sentence != null) {
+            result.add(TranslationItem(sentence))
+        }
 
         if (words.isEmpty())
             return result

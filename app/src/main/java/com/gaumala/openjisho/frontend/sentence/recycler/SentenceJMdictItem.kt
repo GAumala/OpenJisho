@@ -12,13 +12,15 @@ class SentenceJMdictItem(
     val summarized: JMdictEntry.Summarized,
     val position: Int,
     val onClicked: (JMdictEntry.Summarized) -> Unit
-): BindableItem<JmdictItemBinding>(position.toLong()) {
+) : BindableItem<JmdictItemBinding>(position.toLong()) {
 
     override fun bind(viewBinding: JmdictItemBinding, position: Int) {
         // For sentence word lists, we should display the form that's
         // used in sentence as the entry header instead of the header
-        // in dictionary entry
-        val displaySummary = summarized.copy(header = usedForm ?: summarized.header)
+        // in dictionary entry. This also means we have to remove the
+        // furigana string because it may no longer match the header
+        val displaySummary =
+            summarized.copy(header = usedForm ?: summarized.header, furigana = null)
         JMdictItem(displaySummary).bind(viewBinding, position)
 
         // but if the user clicks on this item, the JMdict entry screen
