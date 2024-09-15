@@ -1,17 +1,19 @@
 package com.gaumala.openjisho.frontend.radicals
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.gaumala.openjisho.R
 import com.gaumala.openjisho.frontend.dict.DictFragment
 import com.gaumala.openjisho.frontend.dict.DictSavedState
-import com.gaumala.openjisho.frontend.navigation.runRadicalsToDictTransition
+import com.gaumala.openjisho.frontend.navigation.runExitRadicalSearchTransition
+import com.gaumala.openjisho.frontend.user_sentence.UserSentenceFragment
+import com.gaumala.openjisho.frontend.user_sentence.UserSentenceSavedState
 import com.gaumala.openjisho.utils.parcelable
 
 /**
@@ -23,10 +25,12 @@ import com.gaumala.openjisho.utils.parcelable
 class RadicalsFragment : Fragment() {
 
     companion object {
-        fun newInstance(savedState: DictSavedState?,
-                        isPicker: Boolean): RadicalsFragment {
+        fun newInstance(
+            savedState: Parcelable?,
+            isPicker: Boolean
+        ): RadicalsFragment {
             val args = Bundle()
-            args.putParcelable(DICT_SAVED_STATE_KEY, savedState)
+            args.putParcelable(PREV_SCREEN_SAVED_STATE_KEY, savedState)
             args.putBoolean(IS_PICKER_KEY, isPicker)
 
             val f = RadicalsFragment()
@@ -34,7 +38,7 @@ class RadicalsFragment : Fragment() {
             return f
         }
 
-        const val DICT_SAVED_STATE_KEY = "dictSavedState"
+        const val PREV_SCREEN_SAVED_STATE_KEY = "prevScreenSavedState"
         const val IS_PICKER_KEY = "isPicker"
         const val QUERY_TEXT_KEY = "queryText"
     }
@@ -45,29 +49,63 @@ class RadicalsFragment : Fragment() {
         ViewModelProvider(this, RadicalsViewModel.Factory(this))
             .get(RadicalsViewModel::class.java)
     }
-    private val onBackPressedCallback = object: OnBackPressedCallback(true) {
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             ui.onBackPressed()
         }
     }
 
+    private val exitRadicalSearch = { queryText: String ->
+        val args = requireArguments()
+        val isPicker = args.getBoolean(IS_PICKER_KEY)
+        val savedState: Parcelable? =
+            args.parcelable(PREV_SCREEN_SAVED_STATE_KEY)
+        val nextFragment = when (savedState) {
+            is DictSavedState -> {
+                val updatedState = DictSavedState.updateQuery(savedState, queryText)
+
+                DictFragment.newInstance(
+                    delayKeyboardBy = 600,
+                    savedState = updatedState,
+                    isPicker = isPicker
+                )
+            }
+
+            is UserSentenceSavedState -> {
+                UserSentenceFragment.newInstance(savedState.copy(sentence = queryText))
+            }
+
+            else -> {
+                throw IllegalStateException("Unknown saved state $savedState")
+            }
+        }
+
+        parentFragmentManager.runExitRadicalSearchTransition(
+            this, nextFragment
+        )
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?): View {
+        savedInstanceState: Bundle?
+    ): View {
         setHasOptionsMenu(true)
         val act = requireActivity()
         act.onBackPressedDispatcher
-            .addCallback(this, onBackPressedCallback)
+            .addCallback(this.viewLifecycleOwner, onBackPressedCallback)
 
         val view = inflater.inflate(
-            R.layout.radicals_fragment, container, false)
+            R.layout.radicals_fragment, container, false
+        )
 
-        ui = RadicalsUI(owner = this.viewLifecycleOwner,
+        ui = RadicalsUI(
+            owner = this.viewLifecycleOwner,
             view = view,
-            returnToDict = returnToDict,
+            returnToDict = exitRadicalSearch,
             sink = viewModel.userActionSink,
             liveState = viewModel.liveState,
-            initialText = getInitialText(savedInstanceState))
+            initialText = getInitialText(savedInstanceState)
+        )
         ui.subscribe()
 
         return view
@@ -82,24 +120,12 @@ class RadicalsFragment : Fragment() {
         val savedText = savedInstanceState?.getString(QUERY_TEXT_KEY)
         if (savedText != null) return savedText
 
-        return requireArguments()
-            .parcelable<DictSavedState>(DICT_SAVED_STATE_KEY)
-            ?.queryText ?: ""
-    }
-
-    private val returnToDict = { queryText: String ->
-        val args = requireArguments()
-        val isPicker = args.getBoolean(IS_PICKER_KEY)
-        val savedState =
-            args.parcelable<DictSavedState>(DICT_SAVED_STATE_KEY)
-        val updatedState = DictSavedState.updateQuery(savedState, queryText)
-
-        val nextFragment = DictFragment.newInstance(
-            delayKeyboardBy = 600,
-            savedState = updatedState,
-            isPicker = isPicker)
-
-        parentFragmentManager.runRadicalsToDictTransition(
-            this, nextFragment)
+        val savedState: Parcelable? = requireArguments()
+            .parcelable(PREV_SCREEN_SAVED_STATE_KEY)
+        return when (savedState) {
+            is DictSavedState -> savedState.queryText
+            is UserSentenceSavedState -> savedState.sentence
+            else -> throw IllegalArgumentException("Unknown saved state $savedState")
+        }
     }
 }

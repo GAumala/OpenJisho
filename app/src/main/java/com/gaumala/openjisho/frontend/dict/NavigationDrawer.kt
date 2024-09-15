@@ -11,7 +11,8 @@ import androidx.fragment.app.Fragment
 import com.gaumala.openjisho.R
 import com.gaumala.openjisho.frontend.navigation.MainScreen
 import com.gaumala.openjisho.frontend.navigation.Navigator
-import com.gaumala.openjisho.frontend.user_sentence.InputSentenceWidget
+import com.gaumala.openjisho.frontend.navigation.runSlideTransition
+import com.gaumala.openjisho.frontend.user_sentence.UserSentenceFragment
 import com.gaumala.openjisho.utils.hideKeyboard
 import com.google.android.material.navigation.NavigationView
 
@@ -72,7 +73,7 @@ class NavigationDrawer(private val activity: AppCompatActivity) {
             R.id.new_search ->
                 showDictFragment()
             R.id.input_sentence ->
-                showInputSentenceDialog()
+                showUserSentenceFragment()
             R.id.rebuild ->
                 showRebuildDatabaseDialog()
             R.id.about ->
@@ -105,10 +106,11 @@ class NavigationDrawer(private val activity: AppCompatActivity) {
         }
     }
 
-    private fun showInputSentenceDialog() {
+    private fun showUserSentenceFragment() {
         handler.post {
-            InputSentenceWidget(activity.supportFragmentManager)
-                .prompt()
+            activity.supportFragmentManager.runSlideTransition(
+                newFragment = UserSentenceFragment(),
+            )
         }
     }
 

@@ -8,15 +8,11 @@ import androidx.lifecycle.viewModelScope
 import com.gaumala.mvi.Dispatcher
 import com.gaumala.mvi.DispatcherViewModel
 import com.gaumala.openjisho.backend.db.DictDatabase
-import com.gaumala.openjisho.frontend.dict.DictSavedState
 
 class RadicalsViewModel: DispatcherViewModel<RadicalsState, RadicalsSideEffect>() {
 
     class Factory(private val f: Fragment): ViewModelProvider.Factory {
         private fun getInitialState(): RadicalsState {
-            val dictSavedState: DictSavedState? =
-                f.arguments!!.getParcelable(RadicalsFragment.DICT_SAVED_STATE_KEY)
-
             return RadicalsState(
                 radicals = RadicalIndex.listAll(),
                 results = KanjiResults.Ready(emptyList())

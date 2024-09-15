@@ -1,43 +1,91 @@
 package com.gaumala.openjisho.frontend.user_sentence
 
+import android.text.Editable
+import android.text.TextWatcher
+import android.text.method.LinkMovementMethod
 import android.view.View
+import android.widget.EditText
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
+import com.gaumala.mvi.ActionSink
 import com.gaumala.mvi.BaseUI
 import com.gaumala.openjisho.R
 import com.gaumala.openjisho.common.JMdictEntry
 import com.gaumala.openjisho.frontend.sentence.recycler.SentenceItemFactory
+import com.gaumala.openjisho.frontend.user_sentence.actions.SetSentence
+import com.gaumala.openjisho.utils.image.MatrixCalculator
+import com.gaumala.openjisho.utils.image.MatrixImageView
 import com.xwray.groupie.GroupieAdapter
 
 class UserSentenceUI(
     owner: LifecycleOwner,
     showEntry: (JMdictEntry.Summarized) -> Unit,
-    private val editSentence: (String) -> Unit,
+    private val sink: ActionSink<UserSentenceState, UserSentenceSideEffect>,
+    private val onRadicalSearchButtonClicked: (String) -> Unit,
+    private val onBackPressedCallback: OnBackPressedCallback,
+    private val initialText: String,
     view: View,
-    liveState: LiveData<UserSentenceState>
+    liveState: LiveData<UserSentenceState>,
 ) : BaseUI<UserSentenceState>(owner, liveState) {
 
     private val recycler = view.findViewById<RecyclerView>(R.id.recycler)
     private val sentenceTextView = view.findViewById<TextView>(R.id.sentence_text)
-    private val editButton = view.findViewById<View>(R.id.speed_dial_fab)
+    private val sentenceInput = view.findViewById<EditText>(R.id.sentence_input)
+    private val backButton = view.findViewById<View>(R.id.back_button)
+    private val radicalSearchButton = view.findViewById<View>(R.id.radical_search_icon)
+    private val welcomeGroup: View = view.findViewById(R.id.welcome_group)
     private val adapter = GroupieAdapter()
     private val itemFactory = SentenceItemFactory(showEntry)
 
-    init {
-        setupEditButton()
-        setupRecycler()
+    private val sentenceInputWatcher = object : TextWatcher {
+        var isEnabled = true
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+        }
+
+        override fun afterTextChanged(s: Editable?) {
+            if (!isEnabled)
+                return
+
+            val newText = s!!.toString()
+
+            sink.submitAction(
+                SetSentence(sentence = newText)
+            )
+        }
     }
 
-    private fun setupEditButton() {
-        editButton.visibility = View.VISIBLE
-        editButton.setOnClickListener {
-            val sentence = this.liveState.value?.text ?: return@setOnClickListener
-            editSentence(sentence)
-        }
+    init {
+        setupArt(view)
+        setupEditText()
+        setupRecycler()
+    }
+    private fun setupArt(view: View) {
+        val welcomeArtView: MatrixImageView = view.findViewById(R.id.welcome_art)
+        welcomeArtView.matrixCalculator = MatrixCalculator.FitTop()
+
+        val rawHtml = view.context.getString(R.string.dict_welcome_user_sentence)
+        val welcomeText = view.findViewById<TextView>(R.id.welcome_text)
+        welcomeText.text = HtmlCompat.fromHtml(
+            rawHtml,
+            HtmlCompat.FROM_HTML_MODE_LEGACY
+        )
+        welcomeText.movementMethod = LinkMovementMethod.getInstance()
+
+    }
+
+    private fun setupEditText() {
+        backButton.setOnClickListener { onBackPressedCallback.handleOnBackPressed() }
+        sentenceInput.setText(initialText)
+        sentenceInput.addTextChangedListener(sentenceInputWatcher)
     }
 
     private fun setupRecycler() {
@@ -57,6 +105,13 @@ class UserSentenceUI(
         sentenceTextView.text = state.indices.joinToString(separator = "") { it.sentenceForm }
         val items = itemFactory.createItems(null, state.words)
         adapter.update(items)
+
+        welcomeGroup.visibility = if (items.isEmpty()) View.VISIBLE else View.INVISIBLE
+        recycler.visibility = if (items.isEmpty()) View.INVISIBLE else View.VISIBLE
+
+        radicalSearchButton.setOnClickListener {
+            onRadicalSearchButtonClicked(state.text)
+        }
     }
 
     fun getSavedText(): String? = this.liveState.value?.text

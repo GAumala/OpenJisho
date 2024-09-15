@@ -8,6 +8,13 @@ import com.gaumala.openjisho.common.JMdictEntry
 import com.gaumala.openjisho.common.WordIndex
 
 class WordSearchEngine(private val dao: DictQueryDao) {
+    private val cache = HashMap<String, SentenceWord>()
+
+    private fun SentenceWord.saveInCache(key: String) {
+        cache[key] = this
+        // should we evict older cache entries? idk
+    }
+
     private fun findMatchingEntryForIndex(
         rows: List<JMdictRow>, index: WordIndex
     ): SentenceWord {
@@ -42,16 +49,21 @@ class WordSearchEngine(private val dao: DictQueryDao) {
         return SentenceWord.Unknown(it.sentenceForm)
     }
 
+    private fun lookupSentenceWord(wordIndex: WordIndex): SentenceWord {
+        val rows = dao.lookupJMdictRowsExact(wordIndex.displayForm)
+        return if (rows.size > 1)
+            findMatchingEntryForIndex(rows, wordIndex)
+        else if (rows.size == 1)
+            createSentenceWordFromJMdictRow(wordIndex.usedForm, rows.first())
+        else
+            createUnknownSentenceWord(wordIndex)
+    }
+
     fun findSentenceWords(indices: String) =
         findSentenceWords(TatoebaIndicesParser.parseIndices(indices))
 
-    fun findSentenceWords(indices: List<WordIndex>): List<SentenceWord> = indices.map {
-        val rows = dao.lookupJMdictRowsExact(it.displayForm)
-        if (rows.size > 1)
-            findMatchingEntryForIndex(rows, it)
-        else if (rows.size == 1)
-            createSentenceWordFromJMdictRow(it.usedForm, rows.first())
-        else
-            createUnknownSentenceWord(it)
+    fun findSentenceWords(indices: List<WordIndex>): List<SentenceWord> = indices.map { wordIndex ->
+        cache[wordIndex.displayForm]
+            ?: lookupSentenceWord(wordIndex).apply { saveInCache(wordIndex.displayForm) }
     }
 }

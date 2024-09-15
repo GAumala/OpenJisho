@@ -2,21 +2,17 @@ package com.gaumala.openjisho.frontend.user_sentence
 
 import com.gaumala.mvi.ActionSink
 import com.gaumala.mvi.SideEffectRunner
-import com.gaumala.openjisho.backend.db.DictQueryDao
 import com.gaumala.openjisho.backend.setup.tatoeba.TatoebaIndicesParser
-import com.gaumala.openjisho.frontend.sentence.WordSearchEngine
+import com.gaumala.openjisho.frontend.dict.WordSearchMsg
 import com.gaumala.openjisho.frontend.user_sentence.actions.LoadWords
-import kotlinx.coroutines.CoroutineScope
+import com.gaumala.openjisho.utils.async.MessageThrottler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class UserSentenceSERunner(
-    private val scope: CoroutineScope,
-    private val dao: DictQueryDao
+    private val searchThrottler: MessageThrottler<WordSearchMsg>
 ) : SideEffectRunner<UserSentenceState, UserSentenceSideEffect> {
-    private val wordSearchEngine = WordSearchEngine(dao)
-
     override fun runSideEffect(
         sink: ActionSink<UserSentenceState, UserSentenceSideEffect>,
         args: UserSentenceSideEffect
@@ -29,14 +25,6 @@ class UserSentenceSERunner(
         sink: ActionSink<UserSentenceState, UserSentenceSideEffect>,
         args: UserSentenceSideEffect.LoadWords
     ) {
-        scope.launch(Dispatchers.Main) {
-            val (indices, words) = withContext(Dispatchers.IO) {
-                val indices = TatoebaIndicesParser.parseIndices(args.text)
-                val words = wordSearchEngine.findSentenceWords(indices)
-                Pair(indices, words)
-            }
-
-            sink.submitAction(LoadWords(indices, words))
-        }
+        searchThrottler.sendMessage(WordSearchMsg(sink = sink, sentence = args.text))
     }
 }

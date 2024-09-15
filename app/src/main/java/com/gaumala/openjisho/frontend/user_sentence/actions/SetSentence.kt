@@ -14,6 +14,10 @@ class SetSentence(
             return Update(state)
         }
 
+        if (sentence.isEmpty()) {
+            return Update(UserSentenceState(text = ""))
+        }
+
         val newState = state.copy(text = sentence)
         val sideEffect = UserSentenceSideEffect.LoadWords(sentence)
         return Update(newState, sideEffect)

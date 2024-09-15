@@ -17,16 +17,20 @@ import com.gaumala.openjisho.utils.parcelable
 
 
 class DictViewModel : DispatcherViewModel<DictState, DictSideEffect>() {
-    class Factory(private val f: Fragment,
-                  private val savedInstanceState: Bundle?): ViewModelProvider.Factory {
+    class Factory(
+        private val f: Fragment,
+        private val savedInstanceState: Bundle?
+    ) : ViewModelProvider.Factory {
 
         private fun getSavedState(): DictSavedState? =
             f.arguments!!.parcelable(DictFragment.SAVED_STATE_KEY)
                 ?: savedInstanceState?.parcelable(DictFragment.SAVED_STATE_KEY)
 
-        private fun runStartupEffects(runner: DictSideEffectRunner,
-                                      sink: ActionSink<DictState, DictSideEffect>,
-                                      initialState: DictState) {
+        private fun runStartupEffects(
+            runner: DictSideEffectRunner,
+            sink: ActionSink<DictState, DictSideEffect>,
+            initialState: DictState
+        ) {
             val params = DictSearchParams.createStartupSearchParams(initialState)
                 ?: return
 
@@ -49,8 +53,10 @@ class DictViewModel : DispatcherViewModel<DictState, DictSideEffect>() {
             val dictThrottler = MessageThrottler(
                 viewModel.viewModelScope,
                 searchBroker,
-                DictFragment.SEARCH_INTERVAL)
-            val seRunner = DictSideEffectRunner(searchBroker, dictThrottler)
+                DictFragment.SEARCH_INTERVAL
+            )
+            val seRunner =
+                DictSideEffectRunner(viewModel.viewModelScope, searchBroker, dictThrottler)
 
             val savedState: DictSavedState? = getSavedState()
 

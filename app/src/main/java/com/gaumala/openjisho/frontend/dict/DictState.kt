@@ -19,9 +19,7 @@ data class DictState(val stateToRestore: DictSavedState? = null,
     fun toSavedState(queryText: String,
                      selectedTab: Int,
                      entriesState: Parcelable?,
-                     sentencesState: Parcelable?): DictSavedState? {
-        if (queryText.isEmpty())
-            return null
+                     sentencesState: Parcelable?): DictSavedState {
 
         val hadEntries = entryResults is EntryResults.Ready
                 && entryResults.queryText == queryText

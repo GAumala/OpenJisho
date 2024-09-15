@@ -300,6 +300,7 @@
     <string name="skip">skip</string>
     <string name="selected_radicals_colon">Selected radicals:</string>
     <string name="dict_welcome_radicals">Search kanji by radicals.\nChoose any radicals below to list the kanji that contains all of them.</string>
+    <string name="dict_welcome_user_sentence"><![CDATA[Translate your own sentence.<br/>Input any number of words separated by spaces to look them up in the dictionary.<br/><br />Advanced users may also use <a href="http://edrdg.org/wiki/index.php/Sentence-Dictionary_Linking">Tatoeba indices syntax</a>.]]></string>
     <string name="open_source_libraries">Open source libraries:</string>
     <string name="copy_headword">Copy headword</string>
     <string name="dict_content">Dictionary content</string>

@@ -10,6 +10,7 @@ import com.gaumala.openjisho.utils.async.MessageThrottler
 import com.gaumala.openjisho.utils.error.BetterQueriesException
 import com.gaumala.openjisho.utils.error.Either
 import com.gaumala.openjisho.utils.error.NotFoundException
+import kotlinx.coroutines.CoroutineScope
 
 /**
  * A class that calls [DictCache] for dictionary queries and handles
@@ -90,12 +91,12 @@ class DictSearchBroker(private val cache: DictCache)
         }
     }
 
-    override fun handleMessage(msg: DictSearchMsg) {
+    override suspend fun handleMessage(msg: DictSearchMsg) {
         val params = msg.params
-            if (params.lookupSentences)
-                searchSentences(msg.sink, params.queryText, params.offset)
-            else
-                searchEntries(msg.sink, params.queryText, params.offset)
+        if (params.lookupSentences)
+            searchSentences(msg.sink, params.queryText, params.offset)
+        else
+            searchEntries(msg.sink, params.queryText, params.offset)
     }
 
     private fun exceptionToMessage(queryText: String,

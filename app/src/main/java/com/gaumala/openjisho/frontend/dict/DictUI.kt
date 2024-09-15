@@ -270,9 +270,9 @@ class DictUI(owner: LifecycleOwner,
             shouldThrottle = false))
     }
 
-    fun getSavedState(): DictSavedState? {
+    fun getSavedState(): DictSavedState {
         val latestQueryText = searchEditText.text.toString()
-        return liveState.value?.toSavedState(
+        return liveState.value!!.toSavedState(
             queryText = latestQueryText,
             selectedTab = viewPager.currentItem,
             entriesState = entriesRecycler.saveState(),

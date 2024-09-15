@@ -13,7 +13,6 @@ import com.gaumala.openjisho.frontend.pages.ShowTextFragment
 import com.gaumala.openjisho.frontend.sentence.SentenceFragment
 import com.gaumala.openjisho.frontend.study_list.ComposeTextFragment
 import com.gaumala.openjisho.frontend.study_list.OnTextSubmittedListener
-import com.gaumala.openjisho.frontend.user_sentence.UserSentenceFragment
 import com.gaumala.openjisho.frontend.tour.TourFragment
 
 /**
@@ -59,7 +58,6 @@ class SecondaryActivity: AppCompatActivity(), OnTextSubmittedListener {
             SecondaryScreen.showAppInfo -> AboutFragment()
             SecondaryScreen.showText -> ShowTextFragment()
             SecondaryScreen.showSentence -> SentenceFragment()
-            SecondaryScreen.showUserSentence -> UserSentenceFragment()
             SecondaryScreen.showHelp -> TourFragment()
         }
 

@@ -8,11 +8,16 @@ import com.gaumala.openjisho.frontend.user_sentence.UserSentenceSideEffect
 import com.gaumala.openjisho.frontend.user_sentence.UserSentenceState
 
 class LoadWords(
+    val queryText: String,
     val indices: List<WordIndex>,
     val words: List<SentenceWord>
 ) : Action<UserSentenceState, UserSentenceSideEffect>() {
 
     override fun update(state: UserSentenceState): Update<UserSentenceState, UserSentenceSideEffect> {
+        if (queryText != state.text) {
+            return Update(state)
+        }
+
         return Update(state.copy(indices = indices, words = words))
     }
 }

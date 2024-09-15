@@ -41,7 +41,6 @@ class MessageThrottler<T>(private val scope: CoroutineScope,
     }
 
     interface Receiver<T> {
-        fun handleMessage(msg: T)
+        suspend fun handleMessage(msg: T)
     }
-
 }

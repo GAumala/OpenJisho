@@ -4,14 +4,17 @@ import android.view.Gravity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.transition.Slide
+import androidx.transition.Transition
 import androidx.transition.TransitionSet
 import com.gaumala.openjisho.R
 import com.gaumala.openjisho.frontend.dict.DictFragment
 import com.gaumala.openjisho.frontend.radicals.RadicalsFragment
 
-fun FragmentManager.runSlideTransition(newFragment: Fragment,
-                                       reverse: Boolean = false,
-                                       addToBackStack: Boolean = false) {
+fun FragmentManager.runSlideTransition(
+    newFragment: Fragment,
+    reverse: Boolean = false,
+    addToBackStack: Boolean = false
+) {
     beginTransaction().apply {
         if (reverse)
             setCustomAnimations(
@@ -34,87 +37,109 @@ fun FragmentManager.runSlideTransition(newFragment: Fragment,
     }
 }
 
-fun FragmentManager.runDictToRadicalsTransition(
-    prevFragment: DictFragment,
-    nextFragment: RadicalsFragment) {
+private val dictTopTargets = listOf(
+    R.id.dict_app_bar,
+)
+private val dictBottomTargets = listOf(
+    R.id.pager,
+    R.id.speed_dial_fab,
+)
 
-    val moveDuration = 300L
+private val radicalsTopTargets = listOf(
+    R.id.radicals_app_bar
+)
+private val radicalsBottomTargets = listOf(
+    R.id.results_recycler,
+    R.id.radicals_recycler,
+    R.id.welcome_text,
+    R.id.welcome_art,
+)
 
+private val sentenceTopTargets = listOf(
+    R.id.sentence_app_bar
+)
+private val sentenceBottomTargets = listOf(
+    R.id.recycler
+)
+private const val slideUpDownDuration = 300L
+
+private fun createSlideUpDownExitTransition(
+    topTargets: List<Int>,
+    bottomTargets: List<Int>
+): Transition {
     val exitTransitionSet = TransitionSet()
-    prevFragment.exitTransition = exitTransitionSet
-
     val slideOutDown = Slide(Gravity.BOTTOM)
-    slideOutDown.duration = moveDuration
-    slideOutDown.addTarget(R.id.pager)
-    slideOutDown.addTarget(R.id.speed_dial_fab)
+    slideOutDown.duration = slideUpDownDuration
+    bottomTargets.forEach {
+        slideOutDown.addTarget(it)
+    }
     exitTransitionSet.addTransition(slideOutDown)
 
     val slideOutUp = Slide(Gravity.TOP)
-    slideOutUp.duration = moveDuration
-    slideOutUp.addTarget(R.id.dict_app_bar)
+    slideOutUp.duration = slideUpDownDuration
+    topTargets.forEach {
+        slideOutUp.addTarget(it)
+    }
     exitTransitionSet.addTransition(slideOutUp)
+    return exitTransitionSet
+}
 
+private fun createSlideUpDownEnterTransition(
+    topTargets: List<Int>,
+    bottomTargets: List<Int>
+): Transition {
     val enterTransitionSet = TransitionSet()
-    nextFragment.enterTransition = enterTransitionSet
 
     val slideInDown = Slide(Gravity.TOP)
-    slideInDown.addTarget(R.id.radicals_app_bar)
-    slideInDown.duration = moveDuration
+    topTargets.forEach {
+        slideInDown.addTarget(it)
+    }
+    slideInDown.duration = slideUpDownDuration
     enterTransitionSet.addTransition(slideInDown)
 
     val slideInUp = Slide(Gravity.BOTTOM)
-    slideInUp.addTarget(R.id.results_recycler)
-    slideInUp.addTarget(R.id.radicals_recycler)
-    slideInUp.addTarget(R.id.welcome_text)
-    slideInUp.addTarget(R.id.welcome_art)
-    slideInUp.duration = moveDuration
+    bottomTargets.forEach {
+        slideInUp.addTarget(it)
+    }
+    slideInUp.duration = slideUpDownDuration
     enterTransitionSet.addTransition(slideInUp)
-    enterTransitionSet.startDelay = moveDuration
+    enterTransitionSet.startDelay = slideUpDownDuration
+
+    return enterTransitionSet
+}
+
+fun FragmentManager.runEnterRadicalSearchTransition(
+    prevFragment: Fragment,
+    nextFragment: RadicalsFragment
+) {
+    prevFragment.exitTransition =
+        if (prevFragment is DictFragment) {
+            createSlideUpDownExitTransition(dictTopTargets, dictBottomTargets)
+        } else {
+            createSlideUpDownExitTransition(sentenceTopTargets, sentenceBottomTargets)
+        }
+    nextFragment.enterTransition =
+        createSlideUpDownEnterTransition(radicalsTopTargets, radicalsBottomTargets)
 
     beginTransaction()
         .replace(R.id.container, nextFragment)
         .commitAllowingStateLoss()
 }
 
-fun FragmentManager.runRadicalsToDictTransition(
+fun FragmentManager.runExitRadicalSearchTransition(
     prevFragment: RadicalsFragment,
-    nextFragment: DictFragment) {
-
-    val moveDuration = 300L
-
-    val enterTransitionSet = TransitionSet()
-    nextFragment.enterTransition = enterTransitionSet
-
-    val slideInUp = Slide(Gravity.BOTTOM)
-    slideInUp.duration = moveDuration
-    slideInUp.addTarget(R.id.pager)
-    slideInUp.addTarget(R.id.speed_dial_fab)
-    enterTransitionSet.addTransition(slideInUp)
-
-    val slideInDown = Slide(Gravity.TOP)
-    slideInDown.duration = moveDuration
-    slideInDown.addTarget(R.id.dict_app_bar)
-    enterTransitionSet.addTransition(slideInDown)
-    enterTransitionSet.startDelay = moveDuration
-
-    val exitTransitionSet = TransitionSet()
-    prevFragment.exitTransition = exitTransitionSet
-
-    val slideOutUp = Slide(Gravity.TOP)
-    slideOutUp.addTarget(R.id.radicals_app_bar)
-    slideOutUp.duration = moveDuration
-    exitTransitionSet.addTransition(slideOutUp)
-
-    val slideOutDown = Slide(Gravity.BOTTOM)
-    slideOutDown.addTarget(R.id.results_recycler)
-    slideOutDown.addTarget(R.id.radicals_recycler)
-    slideOutDown.addTarget(R.id.welcome_text)
-    slideOutDown.addTarget(R.id.welcome_art)
-    slideOutDown.duration = moveDuration
-    exitTransitionSet.addTransition(slideOutDown)
+    nextFragment: Fragment
+) {
+    prevFragment.exitTransition =
+        createSlideUpDownExitTransition(radicalsTopTargets, radicalsBottomTargets)
+    nextFragment.enterTransition =
+        if (nextFragment is DictFragment) {
+            createSlideUpDownEnterTransition(dictTopTargets, dictBottomTargets)
+        } else {
+            createSlideUpDownEnterTransition(sentenceTopTargets, sentenceBottomTargets)
+        }
 
     beginTransaction()
         .replace(R.id.container, nextFragment)
         .commitAllowingStateLoss()
 }
-

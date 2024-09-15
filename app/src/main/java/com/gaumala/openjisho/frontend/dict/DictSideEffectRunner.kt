@@ -3,8 +3,12 @@ package com.gaumala.openjisho.frontend.dict
 import com.gaumala.mvi.ActionSink
 import com.gaumala.mvi.SideEffectRunner
 import com.gaumala.openjisho.utils.async.MessageThrottler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class DictSideEffectRunner(private val searchBroker: DictSearchBroker,
+class DictSideEffectRunner(private val scope: CoroutineScope,
+                           private val searchBroker: DictSearchBroker,
                            private val searchThrottler: MessageThrottler<DictSearchMsg>)
     : SideEffectRunner<DictState, DictSideEffect> {
 
@@ -24,7 +28,9 @@ class DictSideEffectRunner(private val searchBroker: DictSearchBroker,
         if (args.shouldThrottle)
             searchThrottler.sendMessage(msg)
         else {
-            searchBroker.handleMessage(msg)
+            scope.launch(Dispatchers.Main) {
+                searchBroker.handleMessage(msg)
+            }
         }
     }
 

@@ -10,8 +10,7 @@ import com.gaumala.openjisho.common.Sentence
 import com.gaumala.openjisho.frontend.navigation.SecondaryScreen
 import com.gaumala.openjisho.frontend.entry.EntryFragment
 import com.gaumala.openjisho.frontend.radicals.RadicalsFragment
-import com.gaumala.openjisho.frontend.navigation.runDictToRadicalsTransition
-import com.gaumala.openjisho.frontend.pages.ShowTextFragment
+import com.gaumala.openjisho.frontend.navigation.runEnterRadicalSearchTransition
 import com.gaumala.openjisho.frontend.sentence.SentenceFragment
 
 /**
@@ -21,7 +20,7 @@ import com.gaumala.openjisho.frontend.sentence.SentenceFragment
  */
 abstract class DictClickHandler(protected val f: DictFragment) {
 
-    abstract fun onRadicalSearchButtonClicked(savedState: DictSavedState?)
+    abstract fun onRadicalSearchButtonClicked(savedState: DictSavedState)
     abstract fun onJMdictEntryClicked(summarized: JMdictEntry.Summarized)
     abstract fun onKanjidicEntryClicked(entry: KanjidicEntry)
     abstract fun onSentenceClicked(sentence: Sentence)
@@ -29,11 +28,11 @@ abstract class DictClickHandler(protected val f: DictFragment) {
 
     class Default(f: DictFragment): DictClickHandler(f) {
 
-        override fun onRadicalSearchButtonClicked(savedState: DictSavedState?) {
+        override fun onRadicalSearchButtonClicked(savedState: DictSavedState) {
             val nextFragment = RadicalsFragment.newInstance(savedState, false)
             val manager = f.parentFragmentManager
 
-            manager.runDictToRadicalsTransition(f, nextFragment)
+            manager.runEnterRadicalSearchTransition(f, nextFragment)
         }
 
         override fun onJMdictEntryClicked(summarized: JMdictEntry.Summarized) {
@@ -64,17 +63,15 @@ abstract class DictClickHandler(protected val f: DictFragment) {
 
             activity.openSecondaryActivity(SecondaryScreen.showSentence, bundle)
         }
-
-
     }
 
     class Picker(f: DictFragment): DictClickHandler(f) {
 
-        override fun onRadicalSearchButtonClicked(savedState: DictSavedState?) {
+        override fun onRadicalSearchButtonClicked(savedState: DictSavedState) {
             val nextFragment = RadicalsFragment.newInstance(savedState, true)
             val manager = f.parentFragmentManager
 
-            manager.runDictToRadicalsTransition(f, nextFragment)
+            manager.runEnterRadicalSearchTransition(f, nextFragment)
         }
 
         override fun onJMdictEntryClicked(summarized: JMdictEntry.Summarized) {
