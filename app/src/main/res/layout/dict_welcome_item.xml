@@ -7,7 +7,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
-        android:id="@+id/welcome_header"
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/welcome_to_openjisho"
@@ -20,7 +20,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
-        android:id="@+id/welcome_text"
+        android:id="@+id/body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@{isSentence ? @string/dict_welcome_sentences : @string/dict_welcome_entries}"
@@ -31,20 +31,20 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/welcome_header" />
+        app:layout_constraintTop_toBottomOf="@id/header" />
 
 
     <com.gaumala.openjisho.utils.image.MatrixImageView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:id="@+id/welcome_art"
+        android:id="@+id/image"
         android:src="@drawable/welcome_art"
         android:layout_marginTop="16dp"
         android:layout_marginStart="64dp"
         android:layout_marginEnd="64dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintVertical_bias="0.2"
-        app:layout_constraintTop_toBottomOf="@id/welcome_text"
+        app:layout_constraintTop_toBottomOf="@id/body"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />

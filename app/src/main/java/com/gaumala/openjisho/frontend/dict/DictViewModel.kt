@@ -23,15 +23,17 @@ class DictViewModel : DispatcherViewModel<DictState, DictSideEffect>() {
     ) : ViewModelProvider.Factory {
 
         private fun getSavedState(): DictSavedState? =
-            f.arguments!!.parcelable(DictFragment.SAVED_STATE_KEY)
+            f.arguments?.parcelable(DictFragment.SAVED_STATE_KEY)
                 ?: savedInstanceState?.parcelable(DictFragment.SAVED_STATE_KEY)
 
         private fun runStartupEffects(
             runner: DictSideEffectRunner,
             sink: ActionSink<DictState, DictSideEffect>,
-            initialState: DictState
+            initialState: DictState,
+            savedState: DictSavedState?
         ) {
-            val params = DictSearchParams.createStartupSearchParams(initialState)
+            val isShowingEntries = savedState?.selectedTab == 0
+            val params = DictSearchParams.createStartupSearchParams(initialState, isShowingEntries)
                 ?: return
 
             // all side effects are throttled here because
@@ -64,7 +66,7 @@ class DictViewModel : DispatcherViewModel<DictState, DictSideEffect>() {
             val newDispatcher = Dispatcher(seRunner, initialState)
             viewModel.setDispatcher(newDispatcher)
 
-            runStartupEffects(seRunner, newDispatcher, initialState)
+            runStartupEffects(seRunner, newDispatcher, initialState, savedState)
 
             return viewModel as T
         }

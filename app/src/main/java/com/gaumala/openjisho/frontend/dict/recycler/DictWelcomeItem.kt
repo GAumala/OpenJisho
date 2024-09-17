@@ -12,7 +12,7 @@ class DictWelcomeItem(private val isSentence: Boolean): BindableItem<DictWelcome
         val textResId =
             if (isSentence) R.string.dict_welcome_sentences
             else R.string.dict_welcome_entries
-        viewBinding.welcomeText.setText(textResId)
+        viewBinding.body.setText(textResId)
     }
 
     override fun getLayout() = R.layout.dict_welcome_item
@@ -27,7 +27,7 @@ class DictWelcomeItem(private val isSentence: Boolean): BindableItem<DictWelcome
 
     override fun initializeViewBinding(view: View): DictWelcomeItemBinding {
         val binding = DictWelcomeItemBinding.bind(view)
-        binding.welcomeArt.matrixCalculator = MatrixCalculator.FitTop()
+        binding.image.matrixCalculator = MatrixCalculator.FitTop()
         return binding
     }
 }

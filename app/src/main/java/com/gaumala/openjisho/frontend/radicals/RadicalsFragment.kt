@@ -39,6 +39,7 @@ class RadicalsFragment : Fragment() {
         }
 
         const val PREV_SCREEN_SAVED_STATE_KEY = "prevScreenSavedState"
+        const val PREV_SCREEN_BOTTOM_TARGETS_KEY = "prevScreenBottomTargets"
         const val IS_PICKER_KEY = "isPicker"
         const val QUERY_TEXT_KEY = "queryText"
     }
@@ -55,11 +56,13 @@ class RadicalsFragment : Fragment() {
         }
     }
 
-    private val exitRadicalSearch = { queryText: String ->
+    private val exitRadicalSearch = { queryText: String, bottomTargets: List<Int> ->
         val args = requireArguments()
         val isPicker = args.getBoolean(IS_PICKER_KEY)
         val savedState: Parcelable? =
             args.parcelable(PREV_SCREEN_SAVED_STATE_KEY)
+        val enterBottomTargets =
+            args.getIntegerArrayList(PREV_SCREEN_BOTTOM_TARGETS_KEY)?.toList() ?: emptyList()
         val nextFragment = when (savedState) {
             is DictSavedState -> {
                 val updatedState = DictSavedState.updateQuery(savedState, queryText)
@@ -81,7 +84,10 @@ class RadicalsFragment : Fragment() {
         }
 
         parentFragmentManager.runExitRadicalSearchTransition(
-            this, nextFragment
+            this,
+            nextFragment,
+            enterBottomTargets = enterBottomTargets,
+            exitBottomTargets = bottomTargets
         )
     }
 

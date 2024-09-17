@@ -1,5 +1,6 @@
 package com.gaumala.openjisho.frontend.navigation
 
+import android.util.Log
 import android.view.Gravity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -59,7 +60,9 @@ private val sentenceTopTargets = listOf(
     R.id.sentence_app_bar
 )
 private val sentenceBottomTargets = listOf(
-    R.id.recycler
+    R.id.recycler,
+    R.id.welcome_us_text,
+    R.id.welcome_us_art,
 )
 private const val slideUpDownDuration = 300L
 
@@ -110,16 +113,21 @@ private fun createSlideUpDownEnterTransition(
 
 fun FragmentManager.runEnterRadicalSearchTransition(
     prevFragment: Fragment,
-    nextFragment: RadicalsFragment
+    nextFragment: RadicalsFragment,
+    exitBottomTargets: List<Int>,
 ) {
     prevFragment.exitTransition =
         if (prevFragment is DictFragment) {
-            createSlideUpDownExitTransition(dictTopTargets, dictBottomTargets)
+            createSlideUpDownExitTransition(dictTopTargets, exitBottomTargets)
         } else {
-            createSlideUpDownExitTransition(sentenceTopTargets, sentenceBottomTargets)
+            createSlideUpDownExitTransition(sentenceTopTargets, exitBottomTargets)
         }
     nextFragment.enterTransition =
         createSlideUpDownEnterTransition(radicalsTopTargets, radicalsBottomTargets)
+
+    val arrayList = ArrayList(exitBottomTargets)
+    nextFragment.requireArguments()
+        .putIntegerArrayList(RadicalsFragment.PREV_SCREEN_BOTTOM_TARGETS_KEY, arrayList)
 
     beginTransaction()
         .replace(R.id.container, nextFragment)
@@ -128,16 +136,19 @@ fun FragmentManager.runEnterRadicalSearchTransition(
 
 fun FragmentManager.runExitRadicalSearchTransition(
     prevFragment: RadicalsFragment,
-    nextFragment: Fragment
+    nextFragment: Fragment,
+    exitBottomTargets: List<Int>,
+    enterBottomTargets: List<Int>,
 ) {
     prevFragment.exitTransition =
-        createSlideUpDownExitTransition(radicalsTopTargets, radicalsBottomTargets)
+        createSlideUpDownExitTransition(radicalsTopTargets, exitBottomTargets)
     nextFragment.enterTransition =
         if (nextFragment is DictFragment) {
-            createSlideUpDownEnterTransition(dictTopTargets, dictBottomTargets)
+            createSlideUpDownEnterTransition(dictTopTargets, enterBottomTargets)
         } else {
-            createSlideUpDownEnterTransition(sentenceTopTargets, sentenceBottomTargets)
+            createSlideUpDownEnterTransition(sentenceTopTargets, enterBottomTargets)
         }
+    Log.d("SentenceDebug", "enter bottom $enterBottomTargets")
 
     beginTransaction()
         .replace(R.id.container, nextFragment)

@@ -4,10 +4,9 @@ data class DictSearchParams(val queryText: String,
                             val lookupSentences: Boolean,
                             val offset: Int) {
     companion object {
-        fun createStartupSearchParams(initialState: DictState): DictSearchParams? {
+        fun createStartupSearchParams(initialState: DictState, isShowingEntries: Boolean): DictSearchParams? {
             val entryResults = initialState.entryResults
             val sentenceResults = initialState.sentenceResults
-            val isShowingEntries = initialState.stateToRestore?.selectedTab == 0
 
             return if (isShowingEntries) {
                 if (entryResults is EntryResults.Loading)

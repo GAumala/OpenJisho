@@ -1,7 +1,6 @@
 package com.gaumala.openjisho.frontend.user_sentence
 
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -10,18 +9,16 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import androidx.transition.Transition
+import androidx.transition.TransitionSet
 import com.gaumala.mvi.ActionSink
 import com.gaumala.openjisho.R
 import com.gaumala.openjisho.common.JMdictEntry
 import com.gaumala.openjisho.frontend.dict.DictFragment
-import com.gaumala.openjisho.frontend.dict.DictSavedState
 import com.gaumala.openjisho.frontend.entry.EntryFragment
 import com.gaumala.openjisho.frontend.navigation.runEnterRadicalSearchTransition
 import com.gaumala.openjisho.frontend.navigation.runSlideTransition
 import com.gaumala.openjisho.frontend.radicals.RadicalsFragment
-import com.gaumala.openjisho.frontend.radicals.RadicalsFragment.Companion.PREV_SCREEN_SAVED_STATE_KEY
-import com.gaumala.openjisho.frontend.radicals.RadicalsFragment.Companion.QUERY_TEXT_KEY
-import com.gaumala.openjisho.frontend.user_sentence.actions.SetSentence
 import com.gaumala.openjisho.utils.parcelable
 
 /**
@@ -30,7 +27,7 @@ import com.gaumala.openjisho.utils.parcelable
  *
  * This fragment is displayed when user clicks "Input Sentence" in the drawer menu.
  */
-class UserSentenceFragment : Fragment(), InputSentenceDialogParent {
+class UserSentenceFragment : Fragment() {
     companion object {
         const val SAVED_TEXT_KEY = "savedText"
         const val SAVED_STATE_KEY = "savedState"
@@ -59,11 +56,11 @@ class UserSentenceFragment : Fragment(), InputSentenceDialogParent {
         )
     }
 
-    private val onRadicalSearchButtonClicked = { sentence: String ->
+    private val onRadicalSearchButtonClicked = { sentence: String, bottomTargets: List<Int> ->
         val savedState = UserSentenceSavedState(sentence)
         val nextFragment = RadicalsFragment.newInstance(savedState, false)
 
-        parentFragmentManager.runEnterRadicalSearchTransition(this, nextFragment)
+        parentFragmentManager.runEnterRadicalSearchTransition(this, nextFragment, bottomTargets)
     }
 
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
@@ -85,7 +82,9 @@ class UserSentenceFragment : Fragment(), InputSentenceDialogParent {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        setupTransitionListener()
         setHasOptionsMenu(true)
+
         val act = requireActivity()
         act.onBackPressedDispatcher
             .addCallback(this.viewLifecycleOwner, onBackPressedCallback)
@@ -106,6 +105,7 @@ class UserSentenceFragment : Fragment(), InputSentenceDialogParent {
             onBackPressedCallback = onBackPressedCallback,
             initialText = getInitialText(savedInstanceState),
             view = view,
+            isTransitioning = enterTransition != null,
             liveState = viewModel.liveState,
         )
         ui.subscribe()
@@ -114,19 +114,35 @@ class UserSentenceFragment : Fragment(), InputSentenceDialogParent {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        val savedText = ui.getSavedText()
-        outState.putString(SAVED_TEXT_KEY, savedText)
-    }
-
-    override fun onInputSentence(sentence: String) {
-        actionSink.submitAction(SetSentence(sentence))
+        val savedState = ui.saveState()
+        outState.putParcelable(SAVED_STATE_KEY, savedState)
     }
 
     private fun getInitialText(savedInstanceState: Bundle?): String {
-        val savedText = savedInstanceState?.getString(SAVED_TEXT_KEY)
-        if (savedText != null) return savedText
-
-        val savedState: UserSentenceSavedState? = arguments?.parcelable(SAVED_STATE_KEY)
+        val savedState: UserSentenceSavedState? = savedInstanceState?.parcelable(SAVED_STATE_KEY)
+            ?: arguments?.parcelable(SAVED_STATE_KEY)
         return savedState?.sentence ?: ""
+    }
+    private fun setupTransitionListener() {
+        val transition = enterTransition as? TransitionSet ?: return
+        transition.addListener(object : Transition.TransitionListener {
+            override fun onTransitionStart(transition: Transition) {
+            }
+
+            override fun onTransitionEnd(transition: Transition) {
+                ui.onTransitionEnd()
+                transition.removeListener(this)
+            }
+
+            override fun onTransitionCancel(transition: Transition) {
+            }
+
+            override fun onTransitionPause(transition: Transition) {
+            }
+
+            override fun onTransitionResume(transition: Transition) {
+            }
+
+        })
     }
 }

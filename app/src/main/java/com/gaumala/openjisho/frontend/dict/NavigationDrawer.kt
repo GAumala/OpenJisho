@@ -118,7 +118,7 @@ class NavigationDrawer(private val activity: AppCompatActivity) {
         handler.post {
             val fragment = currentFragment
             if (fragment is DictFragment) {
-                val savedState = fragment.getSavedState()
+                val savedState = fragment.saveCurrentState()
                 navigator.goTo(MainScreen.MyLists(savedState))
             }
         }

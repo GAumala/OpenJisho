@@ -5,13 +5,11 @@ import com.gaumala.openjisho.backend.dict.DictCache
 import com.gaumala.openjisho.frontend.navigation.MainScreen
 import com.gaumala.openjisho.utils.recycler.PaginationStatus
 
-data class DictState(val stateToRestore: DictSavedState? = null,
-                     val entryResults: EntryResults,
+data class DictState(val entryResults: EntryResults,
                      val sentenceResults: SentenceResults,
                      val destination: MainScreen? = null) {
 
     constructor(): this(
-        stateToRestore = null,
         entryResults = EntryResults.Welcome,
         sentenceResults = SentenceResults.Welcome,
         destination = null)
@@ -75,19 +73,7 @@ data class DictState(val stateToRestore: DictSavedState? = null,
                         queryText, paginationStatus, cachedSentences)
                 }
 
-            val stateToRestore = DictSavedState(
-                queryText = queryText,
-                selectedTab = savedState.selectedTab,
-                entriesPStatus = savedState.entriesPStatus,
-                sentencesPStatus = savedState.sentencesPStatus,
-                entriesState = if (entryResults is EntryResults.Ready)
-                    savedState.entriesState else null,
-                sentencesState = if (sentenceResults is SentenceResults.Ready)
-                    savedState.sentencesState else null
-            )
-
             return DictState(
-                stateToRestore = stateToRestore,
                 entryResults = entryResults,
                 sentenceResults = sentenceResults)
         }

@@ -25,7 +25,7 @@ class RadicalsUI(
     owner: LifecycleOwner,
     view: View,
     private val sink: ActionSink<RadicalsState, RadicalsSideEffect>,
-    private val returnToDict: (String) -> Unit,
+    private val returnToDict: (String, List<Int>) -> Unit,
     initialText: String,
     liveState: LiveData<RadicalsState>
     ): BaseUI<RadicalsState>(owner, liveState) {
@@ -80,7 +80,7 @@ class RadicalsUI(
             removeKanjiAtCursor()
         }
         dictButton.setOnClickListener {
-            returnToDict(searchEditText.text.toString())
+            returnToDict(searchEditText.text.toString(), getBottomTargets())
         }
     }
 
@@ -142,6 +142,14 @@ class RadicalsUI(
         }
     }
 
+    private fun getBottomTargets(): List<Int> {
+        return if (welcomeGroup.visibility == View.VISIBLE) {
+            listOf(R.id.welcome_art, R.id.welcome_text, R.id.radicals_recycler)
+        } else {
+            listOf(R.id.results_recycler, R.id.selected_radicals_scroll, R.id.radicals_recycler)
+        }
+    }
+
 
     private fun createRadicalChip(radical: RadicalIndex): Chip {
         val chip = Chip(ctx)
@@ -188,7 +196,7 @@ class RadicalsUI(
     }
 
     fun onBackPressed() {
-        returnToDict(getQueryText())
+        returnToDict(getQueryText(), getBottomTargets())
     }
 
     // get query text so that we can persist it

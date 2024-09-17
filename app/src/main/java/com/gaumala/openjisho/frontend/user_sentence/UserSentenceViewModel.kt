@@ -24,7 +24,7 @@ class UserSentenceViewModel : DispatcherViewModel<UserSentenceState, UserSentenc
                 f.arguments?.parcelable<UserSentenceSavedState>(UserSentenceFragment.SAVED_STATE_KEY)
             val initialText = savedInstanceState?.getString(UserSentenceFragment.SAVED_TEXT_KEY)
                 ?: savedState?.sentence
-                return UserSentenceState(initialText ?: "")
+            return UserSentenceState(initialText ?: "")
         }
 
         @Suppress("UNCHECKED_CAST")

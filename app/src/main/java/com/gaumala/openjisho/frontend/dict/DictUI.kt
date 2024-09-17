@@ -30,16 +30,19 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.xwray.groupie.GroupieViewHolder
 
-class DictUI(owner: LifecycleOwner,
-             view: View,
-             private val delayKeyboardBy: Long,
-             private val itemFactory: DictItemFactory,
-             private val historyWidget: DictHistoryWidget,
-             private val drawerContainer: NavDrawerContainer?,
-             private val dictClickHandler: DictClickHandler,
-             private val sink: ActionSink<DictState, DictSideEffect>,
-             liveState: LiveData<DictState>
-): BaseUI<DictState>(owner, liveState) {
+class DictUI(
+    owner: LifecycleOwner,
+    view: View,
+    private val delayKeyboardBy: Long,
+    private val itemFactory: DictItemFactory,
+    private val historyWidget: DictHistoryWidget,
+    private val drawerContainer: NavDrawerContainer?,
+    private val dictClickHandler: DictClickHandler,
+    private val sink: ActionSink<DictState, DictSideEffect>,
+    savedState: DictSavedState?,
+    isTransitioning: Boolean,
+    liveState: LiveData<DictState>
+) : BaseUI<DictState>(owner, liveState) {
 
     private val ctx: Context = view.context
     private val searchEditText: EditText = view.findViewById(R.id.search_edit_text)
@@ -51,10 +54,11 @@ class DictUI(owner: LifecycleOwner,
     private val entriesRecycler: RecyclerView = view.findViewById(R.id.entries_recycler)
     private val sentencesRecycler: RecyclerView = view.findViewById(R.id.sentences_recycler)
     private val searchCompanionButton: ImageView = view.findViewById(R.id.search_companion_btn)
+    private val pagerAdapter = DictPagerAdapter(entriesRecycler, sentencesRecycler)
     private val entriesAdapter = GroupAdapter<GroupieViewHolder>()
     private val sentencesAdapter = GroupAdapter<GroupieViewHolder>()
 
-    private val searchInputWatcher = object :TextWatcher {
+    private val searchInputWatcher = object : TextWatcher {
         var isEnabled = true
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
         }
@@ -72,24 +76,26 @@ class DictUI(owner: LifecycleOwner,
             if (newText.isEmpty())
                 return
 
-            sink.submitAction(RunQuery(
-                queryText = newText,
-                lookupSentences = viewPager.currentItem == 1,
-                shouldThrottle = true))
+            sink.submitAction(
+                RunQuery(
+                    queryText = newText,
+                    lookupSentences = viewPager.currentItem == 1,
+                    shouldThrottle = true
+                )
+            )
         }
     }
 
     init {
-        setupPager()
+        setupPager(isTransitioning)
         setupRecyclerView()
         setupEditText()
         setupMenuButtons()
 
         openKeyboardAtStart()
 
-        val recoveredState = liveState.value?.stateToRestore
-        if (recoveredState != null)
-            restoreSavedStateUI(recoveredState)
+        if (savedState != null)
+            restoreSavedStateUI(savedState)
     }
 
     private fun restoreSavedStateUI(savedState: DictSavedState) {
@@ -98,7 +104,9 @@ class DictUI(owner: LifecycleOwner,
         updateSearchCompanionButton(savedState.queryText)
         searchInputWatcher.isEnabled = true
 
-        viewPager.currentItem = savedState.selectedTab
+        if (savedState.selectedTab == 1) {
+            viewPager.currentItem = savedState.selectedTab
+        }
 
         val entriesState = savedState.entriesState
         if (entriesState != null)
@@ -117,14 +125,13 @@ class DictUI(owner: LifecycleOwner,
 
             val hasNotBeenTouchedYet =
                 currentState.entryResults is EntryResults.Welcome
-                    && currentState.sentenceResults is SentenceResults.Welcome
+                        && currentState.sentenceResults is SentenceResults.Welcome
 
             if (hasNotBeenTouchedYet)
                 searchEditText.openKeyboard()
 
         }, delayKeyboardBy)
     }
-
 
 
     private fun setupEditText() {
@@ -138,6 +145,12 @@ class DictUI(owner: LifecycleOwner,
         updateSearchCompanionButton(searchEditText.text.toString())
     }
 
+    private fun getTransitionBottomTargets(): List<Int> {
+        val recyclerId =
+            if (viewPager.currentItem == 0) R.id.entries_recycler else R.id.sentences_recycler
+        return listOf(recyclerId)
+    }
+
     private fun setupMenuButtons() {
         drawerMenuButton?.setOnClickListener { _ ->
             drawerContainer?.openDrawer()
@@ -148,8 +161,11 @@ class DictUI(owner: LifecycleOwner,
 
             // Delay transition for 3~ frames to wait for keyboard to hide
             searchEditText.postDelayed({
-                val savedState = getSavedState()
-                dictClickHandler.onRadicalSearchButtonClicked(savedState)
+                val savedState = saveCurrentState()
+                dictClickHandler.onRadicalSearchButtonClicked(
+                    savedState,
+                    getTransitionBottomTargets()
+                )
             }, 48)
         }
 
@@ -167,9 +183,11 @@ class DictUI(owner: LifecycleOwner,
         searchCompanionButton.setImageLevel(newImageLevel)
     }
 
-    private fun setupPager() {
-        val adapter = DictPagerAdapter(entriesRecycler, sentencesRecycler)
-        viewPager.adapter = adapter
+    private fun setupPager(isTransitioning: Boolean) {
+        viewPager.adapter = pagerAdapter
+        // its hard to animate views inside ViewPager and RecyclerView during
+        // enter transition, so lets just hide the pager until transition finishes
+        viewPager.visibility = if (isTransitioning) View.INVISIBLE else View.VISIBLE
         tabLayout.setupWithViewPager(viewPager)
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(p0: TabLayout.Tab?) {
@@ -186,7 +204,9 @@ class DictUI(owner: LifecycleOwner,
                     RunQuery(
                         queryText = queryText,
                         lookupSentences = p0.position == 1,
-                        shouldThrottle = false))
+                        shouldThrottle = false
+                    )
+                )
             }
 
         })
@@ -225,13 +245,14 @@ class DictUI(owner: LifecycleOwner,
         val currentQueryText = searchEditText.text.toString()
         val hasEntryResultsForCurrentQuery =
             entryResults is EntryResults.Ready
-                && entryResults.queryText == currentQueryText
+                    && entryResults.queryText == currentQueryText
         val hasSentenceResultsForCurrentQuery =
             sentenceResults is SentenceResults.Ready
-                && sentenceResults.queryText == currentQueryText
+                    && sentenceResults.queryText == currentQueryText
 
         if (hasEntryResultsForCurrentQuery
-            || hasSentenceResultsForCurrentQuery) {
+            || hasSentenceResultsForCurrentQuery
+        ) {
             historyWidget.push(currentQueryText)
         }
     }
@@ -264,18 +285,27 @@ class DictUI(owner: LifecycleOwner,
         searchInputWatcher.isEnabled = true
 
         updateSearchCompanionButton(queryText)
-        sink.submitAction(RunQuery(
-            queryText,
-            viewPager.currentItem == 1,
-            shouldThrottle = false))
+        sink.submitAction(
+            RunQuery(
+                queryText,
+                viewPager.currentItem == 1,
+                shouldThrottle = false
+            )
+        )
     }
 
-    fun getSavedState(): DictSavedState {
+    fun saveCurrentState(): DictSavedState {
         val latestQueryText = searchEditText.text.toString()
         return liveState.value!!.toSavedState(
             queryText = latestQueryText,
             selectedTab = viewPager.currentItem,
             entriesState = entriesRecycler.saveState(),
-            sentencesState = sentencesRecycler.saveState())
+            sentencesState = sentencesRecycler.saveState()
+        )
+    }
+
+
+    fun onTransitionEnd() {
+        viewPager.visibility = View.VISIBLE
     }
 }

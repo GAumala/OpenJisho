@@ -1,6 +1,7 @@
 package com.gaumala.openjisho.frontend.dict
 
 import android.view.View
+import android.view.ViewGroup
 import androidx.viewpager.widget.PagerAdapter
 import com.gaumala.openjisho.R
 import java.lang.IndexOutOfBoundsException
@@ -28,5 +29,13 @@ class DictPagerAdapter(private val wordsRecycler: View,
             else -> throw IndexOutOfBoundsException()
         }
         return ctx.getString(resId)
+    }
+
+    override fun setPrimaryItem(container: ViewGroup, position: Int, `object`: Any) {
+        super.setPrimaryItem(container, position, `object`)
+    }
+
+    fun setActivePage(pager: ViewGroup, position: Int) {
+        setPrimaryItem(pager, position, instantiateItem(pager, position))
     }
 }

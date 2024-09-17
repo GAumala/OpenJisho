@@ -27,13 +27,15 @@ class UserSentenceUI(
     owner: LifecycleOwner,
     showEntry: (JMdictEntry.Summarized) -> Unit,
     private val sink: ActionSink<UserSentenceState, UserSentenceSideEffect>,
-    private val onRadicalSearchButtonClicked: (String) -> Unit,
+    private val onRadicalSearchButtonClicked: (String, List<Int>) -> Unit,
     private val onBackPressedCallback: OnBackPressedCallback,
-    private val initialText: String,
+    isTransitioning: Boolean,
+    initialText: String,
     view: View,
     liveState: LiveData<UserSentenceState>,
 ) : BaseUI<UserSentenceState>(owner, liveState) {
 
+    private val container = view.findViewById<View>(R.id.container)
     private val recycler = view.findViewById<RecyclerView>(R.id.recycler)
     private val sentenceTextView = view.findViewById<TextView>(R.id.sentence_text)
     private val sentenceInput = view.findViewById<EditText>(R.id.sentence_input)
@@ -67,13 +69,27 @@ class UserSentenceUI(
         setupArt(view)
         setupEditText()
         setupRecycler()
+
+        if (initialText.isNotEmpty()) {
+            restoreSavedState(initialText)
+
+            if (isTransitioning) {
+                container.visibility = View.GONE
+            }
+        }
     }
+
+    private fun restoreSavedState(initialText: String) {
+        toggleWordsRecycler(true)
+        sentenceInput.setText(initialText)
+    }
+
     private fun setupArt(view: View) {
-        val welcomeArtView: MatrixImageView = view.findViewById(R.id.welcome_art)
+        val welcomeArtView: MatrixImageView = view.findViewById(R.id.welcome_us_art)
         welcomeArtView.matrixCalculator = MatrixCalculator.FitTop()
 
         val rawHtml = view.context.getString(R.string.dict_welcome_user_sentence)
-        val welcomeText = view.findViewById<TextView>(R.id.welcome_text)
+        val welcomeText = view.findViewById<TextView>(R.id.welcome_us_text)
         welcomeText.text = HtmlCompat.fromHtml(
             rawHtml,
             HtmlCompat.FROM_HTML_MODE_LEGACY
@@ -84,7 +100,6 @@ class UserSentenceUI(
 
     private fun setupEditText() {
         backButton.setOnClickListener { onBackPressedCallback.handleOnBackPressed() }
-        sentenceInput.setText(initialText)
         sentenceInput.addTextChangedListener(sentenceInputWatcher)
     }
 
@@ -101,18 +116,37 @@ class UserSentenceUI(
         recycler.addItemDecoration(dividerItemDecoration)
     }
 
+    private fun toggleWordsRecycler(visible: Boolean) {
+        welcomeGroup.visibility = if (visible) View.INVISIBLE else View.VISIBLE
+        recycler.visibility = if (visible) View.VISIBLE else View.INVISIBLE
+    }
+
+
     override fun rebind(state: UserSentenceState) {
         sentenceTextView.text = state.indices.joinToString(separator = "") { it.sentenceForm }
         val items = itemFactory.createItems(null, state.words)
         adapter.update(items)
 
-        welcomeGroup.visibility = if (items.isEmpty()) View.VISIBLE else View.INVISIBLE
-        recycler.visibility = if (items.isEmpty()) View.INVISIBLE else View.VISIBLE
+        toggleWordsRecycler(items.isNotEmpty())
 
         radicalSearchButton.setOnClickListener {
-            onRadicalSearchButtonClicked(state.text)
+            onRadicalSearchButtonClicked(state.text, getTransitionBottomTargets())
         }
     }
 
-    fun getSavedText(): String? = this.liveState.value?.text
+    fun saveState(): UserSentenceSavedState =
+        UserSentenceSavedState(this.liveState.value?.text ?: "")
+
+    private fun getTransitionBottomTargets(): List<Int> {
+        return if (welcomeGroup.visibility == View.VISIBLE) {
+            listOf(R.id.welcome_us_art, R.id.welcome_us_text)
+        } else {
+            listOf(R.id.recycler)
+        }
+    }
+
+    fun onTransitionEnd() {
+        toggleWordsRecycler(sentenceInput.text.isNotEmpty())
+        container.visibility = View.VISIBLE
+    }
 }

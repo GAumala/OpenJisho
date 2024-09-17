@@ -7,6 +7,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.transition.Transition
+import androidx.transition.TransitionSet
 import com.gaumala.openjisho.R
 import com.gaumala.openjisho.backend.lists.ListsDao
 import com.gaumala.openjisho.frontend.dict.recycler.DictItemFactory
@@ -15,6 +17,7 @@ import com.gaumala.openjisho.frontend.my_lists.MyListsCache
 import com.gaumala.openjisho.frontend.navigation.NavDrawerContainer
 import com.gaumala.openjisho.utils.SystemUIHelper
 import com.gaumala.openjisho.utils.async.CoroutineIOWorker
+import com.gaumala.openjisho.utils.parcelable
 
 /**
  * The main fragment of the app. Here is where the user can
@@ -47,11 +50,11 @@ class DictFragment : Fragment() {
     private lateinit var ui: DictUI
 
     private val delayKeyboardBy by lazy {
-        arguments!!.getLong(DELAY_KEYBOARD_BY_KEY)
+        requireArguments().getLong(DELAY_KEYBOARD_BY_KEY)
     }
 
     private val isPicker: Boolean by lazy {
-        arguments!!.getBoolean(IS_PICKER_KEY)
+        requireArguments().getBoolean(IS_PICKER_KEY)
     }
 
     private val layout by lazy {
@@ -100,7 +103,9 @@ class DictFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        setupTransitionListener()
         setHasOptionsMenu(true)
+
         val factory = DictViewModel.Factory(this, savedInstanceState)
         val viewModel =
             ViewModelProvider(this, factory)
@@ -117,6 +122,8 @@ class DictFragment : Fragment() {
             historyWidget = historyWidget,
             sink = viewModel.userActionSink,
             drawerContainer = requireActivity() as? NavDrawerContainer,
+            savedState = requireArguments().parcelable(SAVED_STATE_KEY),
+            isTransitioning = enterTransition != null,
             liveState = viewModel.liveState)
         ui.subscribe()
 
@@ -147,7 +154,7 @@ class DictFragment : Fragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        val savedState = ui.getSavedState()
+        val savedState = ui.saveCurrentState()
         outState.putParcelable(SAVED_STATE_KEY, savedState)
     }
 
@@ -171,9 +178,30 @@ class DictFragment : Fragment() {
         ui.replaceQueryText(queryText)
     }
 
-    fun getSavedState(): DictSavedState? {
-        return ui.getSavedState()
+    private fun setupTransitionListener() {
+        val transition = enterTransition as? TransitionSet ?: return
+        transition.addListener(object : Transition.TransitionListener {
+            override fun onTransitionStart(transition: Transition) {
+            }
+
+            override fun onTransitionEnd(transition: Transition) {
+                ui.onTransitionEnd()
+                transition.removeListener(this)
+            }
+
+            override fun onTransitionCancel(transition: Transition) {
+            }
+
+            override fun onTransitionPause(transition: Transition) {
+            }
+
+            override fun onTransitionResume(transition: Transition) {
+            }
+
+        })
     }
+
+    fun saveCurrentState(): DictSavedState = ui.saveCurrentState()
 
     /**
      * load lists metadata here, so that when the user navigates to
