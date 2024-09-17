@@ -2,7 +2,6 @@ package com.gaumala.openjisho.frontend.setup
 
 import android.graphics.drawable.AnimationDrawable
 import android.view.View
-import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.Group
@@ -20,7 +19,6 @@ import com.gaumala.openjisho.frontend.setup.actions.RestartSetup
 import com.gaumala.openjisho.frontend.setup.actions.UpdateProgress
 import com.gaumala.openjisho.utils.image.MatrixCalculator
 import com.gaumala.openjisho.utils.image.MatrixImageView
-import com.gaumala.openjisho.utils.setProgressCompat
 
 class SetupUI(owner: LifecycleOwner,
               view: View,
@@ -61,7 +59,7 @@ class SetupUI(owner: LifecycleOwner,
         else {
             horizontalProgress.isIndeterminate = false
             val percentage = state.progress
-            horizontalProgress.setProgressCompat(percentage, true)
+            horizontalProgress.setProgress(percentage, true)
         }
 
         errorGroup.visibility = View.GONE

@@ -13,7 +13,6 @@ import com.gaumala.openjisho.common.JMdictEntry
 import com.gaumala.openjisho.common.KanjidicEntry
 import com.gaumala.openjisho.databinding.EntrySectionCardBinding
 import com.gaumala.openjisho.utils.getResIdFromTheme
-import com.gaumala.openjisho.utils.setTextAppearanceCompat
 import com.google.android.material.chip.ChipGroup
 
 object EntrySectionsViewFactory {
@@ -22,12 +21,14 @@ object EntrySectionsViewFactory {
         val ctx = layout.context
         val view = View(ctx)
         val drawable = ColorDrawable(
-            ContextCompat.getColor(ctx, R.color.divider_light_gray))
+            ContextCompat.getColor(ctx, R.color.divider_light_gray)
+        )
         view.background = drawable
 
         val layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
-            ctx.resources.getDimension(R.dimen.light_divider_height).toInt())
+            ctx.resources.getDimension(R.dimen.light_divider_height).toInt()
+        )
         val verticalMargin = ctx.resources.getDimension(R.dimen.text_item_top_margin)
         layoutParams.setMargins(0, verticalMargin.toInt(), 0, verticalMargin.toInt())
 
@@ -39,13 +40,14 @@ object EntrySectionsViewFactory {
         val textView = TextView(ctx)
         val style = if (isLarge) com.google.android.material.R.style.TextAppearance_AppCompat_Large
         else com.google.android.material.R.style.TextAppearance_AppCompat_Medium
-        textView.setTextAppearanceCompat(ctx, style)
+        textView.setTextAppearance(style)
         textView.text = text
         textView.setTextIsSelectable(true)
 
         val layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT)
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
 
         layout.addView(textView, layoutParams)
     }
@@ -74,13 +76,14 @@ object EntrySectionsViewFactory {
 
         val layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT)
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
 
         layout.addView(view, layoutParams)
     }
 
     private fun getKanjiSubtitle(kanjidicEntry: KanjidicEntry): String {
-        val strokes = if(kanjidicEntry.strokeCount == 1) "1 stroke"
+        val strokes = if (kanjidicEntry.strokeCount == 1) "1 stroke"
         else "${kanjidicEntry.strokeCount} strokes"
         if (kanjidicEntry.jlpt == 0)
             return strokes
@@ -100,24 +103,26 @@ object EntrySectionsViewFactory {
 
         tagView.layoutParams = ChipGroup.LayoutParams(
             ChipGroup.LayoutParams.WRAP_CONTENT,
-            ChipGroup.LayoutParams.WRAP_CONTENT)
+            ChipGroup.LayoutParams.WRAP_CONTENT
+        )
 
         return tagView
 
     }
 
-    private fun addFrequencyTag(layout:ViewGroup, tag: JMdictEntry.Tag)  {
+    private fun addFrequencyTag(layout: ViewGroup, tag: JMdictEntry.Tag) {
         val ctx = layout.context
 
         val tagView = TextView(ctx)
-        tagView.setTextAppearanceCompat(
-            ctx,
-            ctx.getResIdFromTheme(com.google.android.material.R.attr.textAppearanceOverline))
+        tagView.setTextAppearance(
+            ctx.getResIdFromTheme(com.google.android.material.R.attr.textAppearanceOverline)
+        )
         tagView.text = tag.getText(ctx)
 
         val layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT)
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
         layout.addView(tagView, layoutParams)
     }
 
@@ -133,7 +138,8 @@ object EntrySectionsViewFactory {
 
         val layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT)
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
         val bottomMargin = ctx.resources.getDimension(R.dimen.chip_group_bottom_margin)
         layoutParams.setMargins(0, 0, 0, bottomMargin.toInt())
 
@@ -171,7 +177,8 @@ object EntrySectionsViewFactory {
 
     fun EntrySectionCardBinding.bindKanjiSection(
         entries: List<KanjidicEntry>,
-        onlySection: Boolean) {
+        onlySection: Boolean
+    ) {
 
         if (onlySection) {
             headerText.visibility = View.GONE
@@ -192,8 +199,10 @@ object EntrySectionsViewFactory {
     fun EntrySectionCardBinding.bindReadingSection(elements: List<JMdictEntry.Element>) {
         val ctx = root.context
         headerText.setText(R.string.reading_header)
-        headerText.setPadding(0, 0, 0,
-            ctx.resources.getDimensionPixelSize(R.dimen.padding_16))
+        headerText.setPadding(
+            0, 0, 0,
+            ctx.resources.getDimensionPixelSize(R.dimen.padding_16)
+        )
 
         val totalElements = elements.size
         elements.forEachIndexed { index, element ->
@@ -210,8 +219,10 @@ object EntrySectionsViewFactory {
 
     fun EntrySectionCardBinding.bindSenseSection(elements: List<JMdictEntry.Sense>) {
         headerText.setText(R.string.sense_header)
-        headerText.setPadding(0, 0, 0,
-            root.context.resources.getDimensionPixelSize(R.dimen.padding_16))
+        headerText.setPadding(
+            0, 0, 0,
+            root.context.resources.getDimensionPixelSize(R.dimen.padding_16)
+        )
 
         val totalElements = elements.size
         elements.forEachIndexed { index, element ->

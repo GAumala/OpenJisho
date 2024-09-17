@@ -10,27 +10,12 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
-import android.widget.ProgressBar
-import android.widget.TextView
-
-fun ProgressBar.setProgressCompat(progress: Int, animated: Boolean) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-        this.setProgress(progress, animated)
-    else
-        this.progress = progress
-}
 
 @Suppress("DEPRECATION")
-fun TextView.setTextAppearanceCompat(ctx: Context, styleResId: Int) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-        this.setTextAppearance(styleResId)
-    else
-        this.setTextAppearance(ctx, styleResId)
-}
-
-@Suppress("DEPRECATION")
-fun notificationBuilderCompat(ctx: Context,
-                              channelId: String): Notification.Builder {
+fun notificationBuilderCompat(
+    ctx: Context,
+    channelId: String
+): Notification.Builder {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
         Notification.Builder(ctx, channelId)
     else
@@ -66,7 +51,8 @@ fun Service.registerNotificationChannelCompat(
     audioAttributes: AudioAttributes?,
     priority: Int,
     name: String,
-    description: String) {
+    description: String
+) {
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         val mChannel = NotificationChannel(channelId, name, priority)
