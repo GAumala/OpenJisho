@@ -27,11 +27,9 @@ class RadicalsFragment : Fragment() {
     companion object {
         fun newInstance(
             savedState: Parcelable?,
-            isPicker: Boolean
         ): RadicalsFragment {
             val args = Bundle()
             args.putParcelable(PREV_SCREEN_SAVED_STATE_KEY, savedState)
-            args.putBoolean(IS_PICKER_KEY, isPicker)
 
             val f = RadicalsFragment()
             f.arguments = args
@@ -40,7 +38,6 @@ class RadicalsFragment : Fragment() {
 
         const val PREV_SCREEN_SAVED_STATE_KEY = "prevScreenSavedState"
         const val PREV_SCREEN_BOTTOM_TARGETS_KEY = "prevScreenBottomTargets"
-        const val IS_PICKER_KEY = "isPicker"
         const val QUERY_TEXT_KEY = "queryText"
     }
 
@@ -58,7 +55,6 @@ class RadicalsFragment : Fragment() {
 
     private val exitRadicalSearch = { queryText: String, bottomTargets: List<Int> ->
         val args = requireArguments()
-        val isPicker = args.getBoolean(IS_PICKER_KEY)
         val savedState: Parcelable? =
             args.parcelable(PREV_SCREEN_SAVED_STATE_KEY)
         val enterBottomTargets =
@@ -70,7 +66,6 @@ class RadicalsFragment : Fragment() {
                 DictFragment.newInstance(
                     delayKeyboardBy = 600,
                     savedState = updatedState,
-                    isPicker = isPicker
                 )
             }
 

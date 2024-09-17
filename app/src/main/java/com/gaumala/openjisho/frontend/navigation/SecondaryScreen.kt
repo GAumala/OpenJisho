@@ -7,13 +7,12 @@ import java.lang.IllegalArgumentException
  * [com.gaumala.openjisho.SecondaryActivity]
  */
 enum class SecondaryScreen {
-    showEntry, pickDictEntry, composeText, showAppInfo, showSentence, showText, showHelp;
+    showEntry, pickDictEntry, showAppInfo, showSentence, showText, showHelp;
 
     fun toScreenKey() = when (this) {
         showHelp -> "showHelp"
         showEntry -> "showEntry"
         pickDictEntry -> "pickDictEntry"
-        composeText -> "composeText"
         showAppInfo -> "showAppInfo"
         showText -> "showText"
         showSentence -> "showSentence"
@@ -22,29 +21,26 @@ enum class SecondaryScreen {
     fun toRequestCode() = when (this) {
         showEntry -> 1
         pickDictEntry -> 2
-        composeText -> 3
-        showAppInfo -> 4
-        showText -> 5
-        showSentence -> 6
-        showHelp -> 8
+        showAppInfo -> 3
+        showText -> 4
+        showSentence -> 5
+        showHelp -> 6
     }
 
     companion object {
         fun fromRequestCode(int: Int) = when(int) {
             1 -> showEntry
             2 -> pickDictEntry
-            3 -> composeText
-            4 -> showAppInfo
-            5 -> showText
-            6 -> showSentence
-            8 -> showHelp
+            3 -> showAppInfo
+            4 -> showText
+            5 -> showSentence
+            6 -> showHelp
             else -> throw IllegalArgumentException("Unknown request code: $int")
         }
 
         fun fromScreenKey(key: String) = when(key) {
             "showEntry" -> showEntry
             "pickDictEntry" -> pickDictEntry
-            "composeText" -> composeText
             "showAppInfo" -> showAppInfo
             "showText" -> showText
             "showSentence" -> showSentence

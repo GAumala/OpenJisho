@@ -11,10 +11,8 @@ import com.gaumala.openjisho.backend.setup.SetupService
 import com.gaumala.openjisho.frontend.dict.DictFragment
 import com.gaumala.openjisho.frontend.dict.NavigationDrawer
 import com.gaumala.openjisho.frontend.navigation.*
-import com.gaumala.openjisho.frontend.study_list.StudyListFragment
 import com.gaumala.openjisho.frontend.pages.WelcomeFragment
 import com.gaumala.openjisho.frontend.setup.SetupFragment
-import com.gaumala.openjisho.frontend.my_lists.MyListsFragment
 import com.gaumala.openjisho.frontend.tour.TourFragment
 
 /**
@@ -60,21 +58,12 @@ class MainActivity : AppCompatActivity(),
 
         when (SecondaryScreen.fromRequestCode(requestCode)) {
             SecondaryScreen.pickDictEntry,
-            SecondaryScreen.composeText ->
-                forwardResultToStudyListFragment(data)
             SecondaryScreen.showEntry,
             SecondaryScreen.showAppInfo,
             SecondaryScreen.showText,
             SecondaryScreen.showSentence,
             SecondaryScreen.showHelp -> TODO()
         }
-    }
-
-    private fun forwardResultToStudyListFragment(data: Intent) {
-        val f = supportFragmentManager.findFragmentById(id.container)
-                as? StudyListFragment ?: return
-
-        f.processResult(data)
     }
 
     fun openSecondaryActivity(screen: SecondaryScreen,
@@ -108,8 +97,7 @@ class MainActivity : AppCompatActivity(),
     private fun goToDictionary(args: MainScreen.Dictionary) {
         val nextFragment = DictFragment.newInstance(
             savedState = args.savedState,
-            delayKeyboardBy = 300,
-            isPicker = false)
+            delayKeyboardBy = 300)
 
         supportFragmentManager.runSlideTransition(
             newFragment = nextFragment,
@@ -140,19 +128,12 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun goToMyLists(args: MainScreen.MyLists) {
-        supportFragmentManager.runSlideTransition(
-            newFragment = MyListsFragment.newInstance(args.savedState),
-            reverse = args.reverse)
-    }
-
     override fun goTo(screen: MainScreen) {
         when (screen) {
             MainScreen.Setup -> goToSetup()
             MainScreen.About -> goToAbout()
             is MainScreen.Tour -> goToTour(screen)
             is MainScreen.Dictionary -> goToDictionary(screen)
-            is MainScreen.MyLists -> goToMyLists(screen)
         }
     }
 

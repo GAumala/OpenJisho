@@ -46,8 +46,6 @@
     <string name="establishing_connection">Establishing connection with server…</string>
     <string name="dict_welcome_entries">Search dictionary entries.\n Input any Japanese or English text to begin.</string>
     <string name="dict_welcome_sentences">Search example sentences translated to English.\n Input any Japanese or English text to begin.</string>
-    <string name="picker_welcome_entries">Add dictionary entries to your list.\n Input any Japanese or English text to begin.</string>
-    <string name="picker_welcome_sentences">Add example sentences to your list.\n Input any Japanese or English text to begin.</string>
     <string name="welcome_to_openjisho">Welcome to OpenJisho!</string>
     <string name="lookup_sentences">Lookup sentences</string>
 
@@ -256,34 +254,7 @@
     <string name="anatomy_tag">Anatomy term</string>
     <string name="top_n_common_tag">Top #%d common</string>
 
-    // Lists
-    <string name="failed_to_load_list">Failed to load list</string>
-    <string name="free_text">Free text</string>
-    <string name="dict_entry">Dictionary entry</string>
-    <string name="example_sentence">Example sentence</string>
-    <string name="study_list">Study List</string>
-    <string name="submit">Submit</string>
-    <string name="add_text">Add text</string>
-    <string name="add_item">Add item</string>
-    <string name="my_lists">My lists</string>
-    <string name="new_list">New list</string>
-    <string name="list_name">List name</string>
-    <string name="create_new_list">Create new list</string>
-    <string name="forward_slash_not_allowed">\'/\' is not allowed</string>
-    <string name="list_with_that_name_already_exists">A list with this name already exists.</string>
-    <string name="failed_to_create_list">Failed to create list</string>
-    <string name="name_cant_be_empty">Name can\'t be empty</string>
     <string name="new_search">New search</string>
-    <string name="edit">Edit</string>
-    <string name="list_updated">List updated</string>
-    <string name="undo">Undo</string>
-    <string name="no_items_selected">No items selected</string>
-    <string name="item_removed">Item removed</string>
-    <string name="failed_to_load_lists">Failed to load lists</string>
-    <string name="list_deleted">List deleted</string>
-    <string name="selection_deleted">Selection deleted</string>
-    <string name="my_lists_welcome">You have no lists.\n Lists let you save entries in a convenient way. Press the floating button below to begin.</string>
-    <string name="study_list_welcome">You have no items in this list.\n Lists can contain dictionary entries, example sentences or arbitrary text. Press the floating button below to begin.</string>
     <string name="entries">Entries</string>
     <string name="delete">Delete</string>
     <string name="text_entry">Text entry</string>

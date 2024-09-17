@@ -6,17 +6,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.transition.Transition
 import androidx.transition.TransitionSet
 import com.gaumala.openjisho.R
-import com.gaumala.openjisho.backend.lists.ListsDao
 import com.gaumala.openjisho.frontend.dict.recycler.DictItemFactory
 import com.gaumala.openjisho.frontend.history.DictHistoryWidget
-import com.gaumala.openjisho.frontend.my_lists.MyListsCache
 import com.gaumala.openjisho.frontend.navigation.NavDrawerContainer
 import com.gaumala.openjisho.utils.SystemUIHelper
-import com.gaumala.openjisho.utils.async.CoroutineIOWorker
 import com.gaumala.openjisho.utils.parcelable
 
 /**
@@ -26,13 +22,13 @@ import com.gaumala.openjisho.utils.parcelable
 class DictFragment : Fragment() {
 
     companion object {
-        fun newInstance(delayKeyboardBy: Long = 0,
-                        savedState: DictSavedState? = null,
-                        isPicker: Boolean = false): DictFragment {
+        fun newInstance(
+            delayKeyboardBy: Long = 0,
+            savedState: DictSavedState? = null
+        ): DictFragment {
             val args = Bundle()
             args.putLong(DELAY_KEYBOARD_BY_KEY, delayKeyboardBy)
             args.putParcelable(SAVED_STATE_KEY, savedState)
-            args.putBoolean(IS_PICKER_KEY, isPicker)
 
             val f = DictFragment()
             f.arguments = args
@@ -42,7 +38,6 @@ class DictFragment : Fragment() {
 
         const val DELAY_KEYBOARD_BY_KEY = "delayKeyboardBy"
         const val SAVED_STATE_KEY = "dictSavedState"
-        const val IS_PICKER_KEY = "isPicker"
 
         const val SEARCH_INTERVAL = 800L
     }
@@ -53,28 +48,13 @@ class DictFragment : Fragment() {
         requireArguments().getLong(DELAY_KEYBOARD_BY_KEY)
     }
 
-    private val isPicker: Boolean by lazy {
-        requireArguments().getBoolean(IS_PICKER_KEY)
-    }
-
-    private val layout by lazy {
-        if (isPicker)
-            R.layout.pick_dict_item_fragment
-        else
-            R.layout.dict_fragment
-    }
-
+    private val layout = R.layout.dict_fragment
 
     private val drawerContainer by lazy {
         requireActivity() as? NavDrawerContainer
     }
 
-    private val dictClickHandler by lazy {
-        if (isPicker)
-            DictClickHandler.Picker(this)
-        else
-            DictClickHandler.Default(this)
-    }
+    private val dictClickHandler = DictClickHandler.Default(this)
 
     private val historyWidget by lazy {
         DictHistoryWidget(this)
@@ -82,12 +62,11 @@ class DictFragment : Fragment() {
 
     private val itemFactory by lazy {
         DictItemFactory(
-            isPicker = isPicker,
             onJMdictEntryClicked = { entry ->
                 dictClickHandler.onJMdictEntryClicked(entry)
                 historyWidget.push(entry.header)
             },
-            onKanjidicEntryClicked = {entry ->
+            onKanjidicEntryClicked = { entry ->
                 dictClickHandler.onKanjidicEntryClicked(entry)
             },
             onSentenceClicked = { sentence ->
@@ -112,9 +91,11 @@ class DictFragment : Fragment() {
                 .get(DictViewModel::class.java)
 
         val view = inflater.inflate(
-            layout, container, false)
+            layout, container, false
+        )
 
-        ui = DictUI(owner = this.viewLifecycleOwner,
+        ui = DictUI(
+            owner = this.viewLifecycleOwner,
             delayKeyboardBy = delayKeyboardBy,
             itemFactory = itemFactory,
             dictClickHandler = dictClickHandler,
@@ -124,7 +105,8 @@ class DictFragment : Fragment() {
             drawerContainer = requireActivity() as? NavDrawerContainer,
             savedState = requireArguments().parcelable(SAVED_STATE_KEY),
             isTransitioning = enterTransition != null,
-            liveState = viewModel.liveState)
+            liveState = viewModel.liveState
+        )
         ui.subscribe()
 
         SystemUIHelper(this).matchWithPrimary()
@@ -145,7 +127,6 @@ class DictFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         drawerContainer?.setDrawerLocked(false)
-        preloadMyLists()
     }
 
     override fun onStop() {
@@ -202,17 +183,4 @@ class DictFragment : Fragment() {
     }
 
     fun saveCurrentState(): DictSavedState = ui.saveCurrentState()
-
-    /**
-     * load lists metadata here, so that when the user navigates to
-     * My Lists, the data is already cached.
-     */
-    private fun preloadMyLists() {
-        val ctx = requireContext()
-        val worker = CoroutineIOWorker(lifecycleScope)
-        val dao = ListsDao.Default(ctx)
-
-        val cache = MyListsCache.Default(worker, dao)
-        cache.preload()
-    }
 }

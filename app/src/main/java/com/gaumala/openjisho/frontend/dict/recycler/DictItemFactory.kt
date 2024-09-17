@@ -9,18 +9,14 @@ import com.gaumala.openjisho.frontend.dict.SentenceResults
 import com.xwray.groupie.viewbinding.BindableItem
 
 
-class DictItemFactory(private val isPicker: Boolean,
-                      private val onJMdictEntryClicked: (JMdictEntry.Summarized) -> Unit,
+class DictItemFactory(private val onJMdictEntryClicked: (JMdictEntry.Summarized) -> Unit,
                       private val onKanjidicEntryClicked: (KanjidicEntry) -> Unit,
                       private val onSentenceClicked: (Sentence) -> Unit,
                       private val onSuggestionClicked: (String) -> Unit) {
 
     fun fromEntryResults(results: EntryResults): List<BindableItem<*>>  {
         return when (results) {
-            EntryResults.Welcome -> listOf(
-                if (isPicker) PickerWelcomeItem(false)
-                else DictWelcomeItem(false)
-            )
+            EntryResults.Welcome -> listOf(DictWelcomeItem(false))
             is EntryResults.Loading -> listOf(LoadingItem())
             is EntryResults.Error -> listOf(ErrorItem(results.message))
             is EntryResults.ErrorWithSuggestions ->
@@ -65,10 +61,7 @@ class DictItemFactory(private val isPicker: Boolean,
 
     fun fromSentenceResults(results: SentenceResults): List<BindableItem<*>>  {
         return when (results) {
-            SentenceResults.Welcome -> listOf(
-                if (isPicker) PickerWelcomeItem(true)
-                else DictWelcomeItem(true)
-            )
+            SentenceResults.Welcome -> listOf(DictWelcomeItem(true))
             is SentenceResults.Loading -> listOf(LoadingItem())
             is SentenceResults.Error -> listOf(ErrorItem(results.message))
             is SentenceResults.Ready -> {

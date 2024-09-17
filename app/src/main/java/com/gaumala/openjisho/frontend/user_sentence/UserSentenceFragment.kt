@@ -58,7 +58,7 @@ class UserSentenceFragment : Fragment() {
 
     private val onRadicalSearchButtonClicked = { sentence: String, bottomTargets: List<Int> ->
         val savedState = UserSentenceSavedState(sentence)
-        val nextFragment = RadicalsFragment.newInstance(savedState, false)
+        val nextFragment = RadicalsFragment.newInstance(savedState)
 
         parentFragmentManager.runEnterRadicalSearchTransition(this, nextFragment, bottomTargets)
     }

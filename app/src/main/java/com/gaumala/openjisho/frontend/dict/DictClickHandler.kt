@@ -29,7 +29,7 @@ abstract class DictClickHandler(protected val f: DictFragment) {
     class Default(f: DictFragment): DictClickHandler(f) {
 
         override fun onRadicalSearchButtonClicked(savedState: DictSavedState, bottomTargets: List<Int>) {
-            val nextFragment = RadicalsFragment.newInstance(savedState, false)
+            val nextFragment = RadicalsFragment.newInstance(savedState)
             val manager = f.parentFragmentManager
 
             manager.runEnterRadicalSearchTransition(f, nextFragment, bottomTargets)
@@ -62,40 +62,6 @@ abstract class DictClickHandler(protected val f: DictFragment) {
             bundle.putParcelable(SentenceFragment.SENTENCE_KEY, sentence)
 
             activity.openSecondaryActivity(SecondaryScreen.showSentence, bundle)
-        }
-    }
-
-    class Picker(f: DictFragment): DictClickHandler(f) {
-
-        override fun onRadicalSearchButtonClicked(savedState: DictSavedState, bottomTargets: List<Int>) {
-            val nextFragment = RadicalsFragment.newInstance(savedState, true)
-            val manager = f.parentFragmentManager
-
-            manager.runEnterRadicalSearchTransition(f, nextFragment, bottomTargets)
-        }
-
-        override fun onJMdictEntryClicked(summarized: JMdictEntry.Summarized) {
-            val intent = Intent()
-            intent.putExtra(SecondaryActivity.RESULT_JMDICT_SUMMARIZED_KEY, summarized)
-
-            val activity = f.requireActivity() as SecondaryActivity
-            activity.submitOKResult(intent)
-        }
-
-        override fun onKanjidicEntryClicked(entry: KanjidicEntry)  {
-            val intent = Intent()
-            intent.putExtra(SecondaryActivity.RESULT_KANJIDIC_ENTRY_KEY, entry)
-
-            val activity = f.requireActivity() as SecondaryActivity
-            activity.submitOKResult(intent)
-        }
-
-        override fun onSentenceClicked(sentence: Sentence) {
-            val intent = Intent()
-            intent.putExtra(SecondaryActivity.RESULT_SENTENCE_KEY, sentence)
-
-            val activity = f.requireActivity() as SecondaryActivity
-            activity.submitOKResult(intent)
         }
     }
 }

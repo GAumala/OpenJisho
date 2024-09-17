@@ -11,8 +11,6 @@ import com.gaumala.openjisho.frontend.entry.EntryFragment
 import com.gaumala.openjisho.frontend.pages.AboutFragment
 import com.gaumala.openjisho.frontend.pages.ShowTextFragment
 import com.gaumala.openjisho.frontend.sentence.SentenceFragment
-import com.gaumala.openjisho.frontend.study_list.ComposeTextFragment
-import com.gaumala.openjisho.frontend.study_list.OnTextSubmittedListener
 import com.gaumala.openjisho.frontend.tour.TourFragment
 
 /**
@@ -20,16 +18,10 @@ import com.gaumala.openjisho.frontend.tour.TourFragment
  * user navigate away from MainActivity for a specific goal and
  * then come back. This is mostly used for detail screens.
  */
-class SecondaryActivity: AppCompatActivity(), OnTextSubmittedListener {
+class SecondaryActivity: AppCompatActivity() {
 
     private val fragmentAlreadySet
         get() = supportFragmentManager.findFragmentById(id.container) != null
-
-    override fun onTextSubmitted(text: String) {
-        val intent = Intent()
-        intent.putExtra(RESULT_TEXT_KEY, text)
-        submitOKResult(intent)
-    }
 
     fun submitOKResult(intent: Intent) {
         setResult(Activity.RESULT_OK, intent)
@@ -53,7 +45,6 @@ class SecondaryActivity: AppCompatActivity(), OnTextSubmittedListener {
     private fun createFragmentFromType(screen: SecondaryScreen) =
         when (screen) {
             SecondaryScreen.showEntry -> EntryFragment()
-            SecondaryScreen.composeText -> ComposeTextFragment()
             SecondaryScreen.pickDictEntry -> DictFragment()
             SecondaryScreen.showAppInfo -> AboutFragment()
             SecondaryScreen.showText -> ShowTextFragment()
@@ -73,10 +64,5 @@ class SecondaryActivity: AppCompatActivity(), OnTextSubmittedListener {
     companion object {
         const val EXTRA_ARGS_KEY = "extraArgs"
         const val SCREEN_KEY = "screen"
-
-        const val RESULT_TEXT_KEY = "resultText"
-        const val RESULT_JMDICT_SUMMARIZED_KEY = "resultJMdictSummarized"
-        const val RESULT_KANJIDIC_ENTRY_KEY = "resultKanjidicEntry"
-        const val RESULT_SENTENCE_KEY = "resultSentenceEntry"
     }
 }
