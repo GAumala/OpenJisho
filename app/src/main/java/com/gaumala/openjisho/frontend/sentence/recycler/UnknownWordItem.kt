@@ -23,7 +23,7 @@ class UnknownWordItem(
         if (other !is UnknownWordItem)
             return false
 
-        return other.position == position
+        return other.word == word
     }
 
     override fun hashCode(): Int {

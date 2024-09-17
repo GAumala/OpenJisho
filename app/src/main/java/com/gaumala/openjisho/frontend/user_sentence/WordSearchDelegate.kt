@@ -6,9 +6,7 @@ import com.gaumala.openjisho.frontend.dict.WordSearchMsg
 import com.gaumala.openjisho.frontend.sentence.WordSearchEngine
 import com.gaumala.openjisho.frontend.user_sentence.actions.LoadWords
 import com.gaumala.openjisho.utils.async.MessageThrottler
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
