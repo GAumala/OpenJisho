@@ -62,8 +62,17 @@ class WordSearchEngine(private val dao: DictQueryDao) {
     fun findSentenceWords(indices: String) =
         findSentenceWords(TatoebaIndicesParser.parseIndices(indices))
 
+    private fun findSentenceWordInCache(wordIndex: WordIndex): SentenceWord? {
+        val cached = cache[wordIndex.displayForm] ?: return null
+        if (cached is SentenceWord.JMdict && cached.usedForm != wordIndex.usedForm) {
+            // entries in the cache may have a different usedForm, we have to fix that
+            return cached.copy(usedForm = wordIndex.usedForm)
+        }
+        return cached
+    }
+
     fun findSentenceWords(indices: List<WordIndex>): List<SentenceWord> = indices.map { wordIndex ->
-        cache[wordIndex.displayForm]
+        findSentenceWordInCache(wordIndex)
             ?: lookupSentenceWord(wordIndex).apply { saveInCache(wordIndex.displayForm) }
     }
 }

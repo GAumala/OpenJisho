@@ -19,8 +19,12 @@ class SentenceJMdictItem(
         // used in sentence as the entry header instead of the header
         // in dictionary entry. This also means we have to remove the
         // furigana string because it may no longer match the header
+        val displayHeader = usedForm ?: summarized.header
+        val displayFurigana =
+            if (usedForm != null && usedForm != summarized.header) null
+            else summarized.furigana
         val displaySummary =
-            summarized.copy(header = usedForm ?: summarized.header, furigana = null)
+            summarized.copy(header = displayHeader, furigana = displayFurigana)
         JMdictItem(displaySummary).bind(viewBinding, position)
 
         // but if the user clicks on this item, the JMdict entry screen
@@ -37,6 +41,7 @@ class SentenceJMdictItem(
             return false
 
         return other.summarized.entry.entryId == summarized.entry.entryId
+                && other.usedForm == usedForm
     }
 
     override fun hashCode(): Int {
