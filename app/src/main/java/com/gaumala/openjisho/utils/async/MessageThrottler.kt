@@ -3,6 +3,7 @@ package com.gaumala.openjisho.utils.async
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.sendBlocking
+import kotlinx.coroutines.channels.trySendBlocking
 
 class MessageThrottler<T>(private val scope: CoroutineScope,
                           private val receiver: Receiver<T>,
@@ -37,7 +38,7 @@ class MessageThrottler<T>(private val scope: CoroutineScope,
 
     fun sendMessage(msg: T) {
         // conflated chanel never blocks
-        channel.sendBlocking(msg)
+        channel.trySendBlocking(msg)
     }
 
     interface Receiver<T> {

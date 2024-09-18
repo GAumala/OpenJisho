@@ -11,9 +11,10 @@ import com.xwray.groupie.OnItemLongClickListener
 import com.xwray.groupie.viewbinding.BindableItem
 import com.xwray.groupie.viewbinding.GroupieViewHolder
 
-class HistoryItem(private val entry: String,
-                  private val onItemSelected: () -> Unit)
-    : BindableItem<HistoryItemBinding>(entry.hashCode().toLong()) {
+class HistoryItem(
+    private val entry: String,
+    private val onItemSelected: () -> Unit
+) : BindableItem<HistoryItemBinding>(entry.hashCode().toLong()) {
 
     override fun bind(viewBinding: HistoryItemBinding, position: Int) {
         viewBinding.textView.text = entry
@@ -54,6 +55,7 @@ class HistoryItem(private val entry: String,
             binding,
             binding.root,
             binding.textView,
-            binding.deleteIcon)
+            binding.deleteIcon
+        )
     }
 }

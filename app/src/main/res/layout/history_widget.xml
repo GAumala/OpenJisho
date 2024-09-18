@@ -1,49 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:minHeight="300dp"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:minHeight="300dp">
 
-    <View
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="@android:color/white"
-        android:elevation="4dp" />
-
-    <ImageView
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:padding="16dp"
-        android:layout_gravity="start"
-        android:id="@+id/history_icon"
-        android:src="@drawable/ic_history_black_24dp"
-        android:elevation="4dp" />
-
-    <ImageView
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:padding="16dp"
-        android:layout_gravity="end"
-        android:id="@+id/close_btn"
-        android:src="@drawable/ic_clear_black_24dp"
-        android:elevation="4dp"
-        android:foreground="?attr/selectableItemBackground" />
+        android:layout_height="wrap_content" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="56dp"
-        android:text="@string/history"
-        android:gravity="center_vertical"
-        android:layout_marginStart="56dp"
+        style="@style/TextAppearance.AppCompat.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
         android:elevation="4dp"
-        style="@style/TextAppearance.AppCompat.Title"/>
+        android:gravity="start"
+        android:paddingHorizontal="24dp"
+        android:text="@string/search_history" />
+
+    <View
+
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="86dp"
+        android:alpha="0.3"
+        android:background="?colorOnSurface" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/history_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:layout_marginTop="56dp" />
+        android:layout_marginTop="87dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 </FrameLayout>

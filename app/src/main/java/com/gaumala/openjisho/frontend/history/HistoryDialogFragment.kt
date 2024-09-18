@@ -20,11 +20,11 @@ import com.xwray.groupie.viewbinding.BindableItem
  * This is displayed after the user clicks the history floating action button
  * in [DictFragment].
  */
-class HistoryDialogFragment: BottomSheetDialogFragment() {
+class HistoryDialogFragment : BottomSheetDialogFragment() {
 
     private val mainFragment: DictFragment?
         get() {
-            val manager = activity!!.supportFragmentManager
+            val manager = requireActivity().supportFragmentManager
             return manager.findFragmentById(R.id.container) as? DictFragment
         }
 
@@ -35,7 +35,7 @@ class HistoryDialogFragment: BottomSheetDialogFragment() {
 
     val adapter = GroupAdapter<GroupieViewHolder>()
 
-    private val touchHelper = object: SwipeableItemTouchHelper() {
+    private val touchHelper = object : SwipeableItemTouchHelper() {
         override fun onItemSwiped(itemPosition: Int) {
             mainFragment?.removeHistoryEntryAt(itemPosition)
             adapter.update(historyEntries)
@@ -54,18 +54,13 @@ class HistoryDialogFragment: BottomSheetDialogFragment() {
         recyclerView.adapter = adapter
         adapter.update(historyEntries)
         touchHelper.attachTo(recyclerView)
-
-        val closeButton =
-            view.findViewById<View>(R.id.close_btn)
-        closeButton.setOnClickListener {
-            dismiss()
-        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?): View? {
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.history_widget, null)
         bindView(view)
         return view

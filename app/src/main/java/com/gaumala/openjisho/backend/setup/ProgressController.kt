@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.sendBlocking
+import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.util.*
@@ -37,11 +38,11 @@ class ProgressController(assertCoroutineStillActive: () -> Unit,
 
     private val activeReporterListener = object: SetupProgressListener {
         override fun onProgressChange(step: SetupStep, progress: Int) {
-            channel.sendBlocking(Msg.Update(step, progress))
+            channel.trySendBlocking(Msg.Update(step, progress))
         }
 
         override fun onDismissed() {
-            channel.sendBlocking(Msg.Dismiss)
+            channel.trySendBlocking(Msg.Dismiss)
         }
     }
 

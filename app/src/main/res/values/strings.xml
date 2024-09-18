@@ -281,4 +281,5 @@
     <string name="please_input_sentence"><![CDATA[Please input a sentence using spaces (\' \') to separate words to lookup in the dictionary.<br/>We also support <a href="http://edrdg.org/wiki/index.php/Sentence-Dictionary_Linking">Tatoeba indices</a> to make it easier to lookup the correct words.]]></string>
     <string name="sentence">Sentence</string>
     <string name="edit_sentence">Edit sentence</string>
+    <string name="search_history">Search history</string>
 </resources>
