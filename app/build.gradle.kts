@@ -13,8 +13,8 @@ android {
         applicationId = "com.gaumala.openjisho"
         minSdk = 24
         targetSdk = 34
-        versionCode = 5
-        versionName = "1.01"
+        versionCode = 6
+        versionName = "1.10"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
