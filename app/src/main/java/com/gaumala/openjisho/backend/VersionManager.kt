@@ -18,7 +18,7 @@ object VersionManager {
                 return null
             }
 
-            return connection.inputStream.bufferedReader().use { it.readText() }
+            return connection.inputStream.bufferedReader().use { it.readText() }.trim()
         } catch (ex: IOException) {
             return null
         }
@@ -29,7 +29,8 @@ object VersionManager {
             getLatestVersion()
         }
 
-        if (latestVersion != null && latestVersion != BuildConfig.VERSION_NAME) {
+        val currentVersion = BuildConfig.VERSION_NAME
+        if (latestVersion != null && latestVersion != currentVersion) {
             callback(latestVersion)
         }
     }
