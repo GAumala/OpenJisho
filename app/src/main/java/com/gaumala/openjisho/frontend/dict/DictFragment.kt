@@ -1,19 +1,26 @@
 package com.gaumala.openjisho.frontend.dict
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.transition.Transition
 import androidx.transition.TransitionSet
 import com.gaumala.openjisho.R
+import com.gaumala.openjisho.backend.VersionManager
 import com.gaumala.openjisho.frontend.dict.recycler.DictItemFactory
 import com.gaumala.openjisho.frontend.history.DictHistoryWidget
 import com.gaumala.openjisho.frontend.navigation.NavDrawerContainer
 import com.gaumala.openjisho.utils.SystemUIHelper
 import com.gaumala.openjisho.utils.parcelable
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+
 
 /**
  * The main fragment of the app. Here is where the user can
@@ -58,6 +65,15 @@ class DictFragment : Fragment() {
 
     private val historyWidget by lazy {
         DictHistoryWidget(this)
+    }
+
+    private val onNewVersionNotificationClicked: () -> Unit = {
+        val browserIntent = Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse(VersionManager.UPDATE_URL)
+        )
+        startActivity(browserIntent)
+
     }
 
     private val itemFactory by lazy {
@@ -112,16 +128,8 @@ class DictFragment : Fragment() {
         SystemUIHelper(this).matchWithPrimary()
 
         setupToolbar(view.findViewById<Toolbar>(R.id.toolbar))
-
+        runVersionCheck()
         return view
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home ->
-                requireActivity().onBackPressed()
-        }
-        return true
     }
 
     override fun onStart() {
@@ -182,5 +190,15 @@ class DictFragment : Fragment() {
         })
     }
 
-    fun saveCurrentState(): DictSavedState = ui.saveCurrentState()
+    private fun runVersionCheck() {
+        lifecycleScope.launch {
+            VersionManager.runIfNewVersionAvailable { _ ->
+                if (isActive) {
+                    ui.showNewVersionNotification {
+                        onNewVersionNotificationClicked()
+                    }
+                }
+            }
+        }
+    }
 }

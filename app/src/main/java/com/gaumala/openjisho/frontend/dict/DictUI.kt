@@ -6,6 +6,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
@@ -27,6 +28,7 @@ import com.gaumala.openjisho.utils.recycler.restoreState
 import com.gaumala.openjisho.utils.recycler.saveState
 import com.gaumala.openjisho.utils.recycler.setOnScrollToBottomListener
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.xwray.groupie.GroupieViewHolder
 
@@ -45,6 +47,7 @@ class DictUI(
 ) : BaseUI<DictState>(owner, liveState) {
 
     private val ctx: Context = view.context
+    private val coordinator = view as CoordinatorLayout
     private val searchEditText: EditText = view.findViewById(R.id.search_edit_text)
     private val fab: FloatingActionButton = view.findViewById(R.id.speed_dial_fab)
     private val drawerMenuButton: View? = view.findViewById(R.id.drawer_menu_icon)
@@ -307,5 +310,11 @@ class DictUI(
 
     fun onTransitionEnd() {
         viewPager.visibility = View.VISIBLE
+    }
+
+    fun showNewVersionNotification(onClickListener: View.OnClickListener) {
+        Snackbar.make(coordinator, R.string.new_version_available, Snackbar.LENGTH_LONG)
+            .setAction(R.string.open, onClickListener)
+            .show()
     }
 }

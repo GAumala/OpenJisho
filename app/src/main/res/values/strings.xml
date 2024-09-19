@@ -282,4 +282,6 @@
     <string name="sentence">Sentence</string>
     <string name="edit_sentence">Edit sentence</string>
     <string name="search_history">Search history</string>
+    <string name="new_version_available">New version available!</string>
+    <string name="open">Open</string>
 </resources>
